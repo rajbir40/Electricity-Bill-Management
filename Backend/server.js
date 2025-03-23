@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(cors());
 require("dotenv").config();
 
-
+console.log(process.env.GMAIL_USER);
 app.get("/", (req, res) => {
     res.send("Electricity Bill Management API is running...");
 });

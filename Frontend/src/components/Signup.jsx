@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import signupBg from '../assets/signupBg.jpg';
-
+import { useNavigate } from 'react-router-dom';
 const SignUpPage = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -50,8 +51,9 @@ const SignUpPage = () => {
     const newErrors = validate();
     
     if (Object.keys(newErrors).length === 0) {
-      alert('Sign up successful! Redirecting to dashboard...');
+      alert('Sign up successful! Redirecting to login page...');
       console.log('Form submitted:', formData);
+      navigate('/login');
     } else {
       setErrors(newErrors);
     }

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import signupBg from '../assets/signupBg.jpg';
-
+import { useNavigate } from 'react-router-dom';
 const LoginPage = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -39,19 +40,25 @@ const LoginPage = () => {
     if (Object.keys(newErrors).length === 0) {
       alert('Sign in successful! Redirecting to dashboard...');
       console.log('Form submitted:', formData);
+      navigate('/home');
     } else {
       setErrors(newErrors);
     }
   };
 
   return (
-    <div className="min-h-screen bg-cover bg-center flex items-center justify-center px-4" style={{ backgroundImage: `url(${signupBg})` }}>
+    <div
+      className="min-h-screen bg-cover bg-center flex items-center justify-center px-4"
+      style={{ backgroundImage: `url(${signupBg})` }}
+    >
       <div className="max-w-md w-full bg-white bg-opacity-90 rounded-lg shadow-xl p-8 backdrop-blur-md">
         <div className="text-center mb-6">
           <h2 className="text-3xl font-bold text-gray-900">Sign In</h2>
-          <p className="mt-2 text-sm text-gray-600">Join us and start managing your electricity usage efficiently.</p>
+          <p className="mt-2 text-sm text-gray-600">
+            Join us and start managing your electricity usage efficiently.
+          </p>
         </div>
-        
+
         <form className="space-y-4" onSubmit={handleSubmit}>
           {['email', 'password'].map((field) => (
             <div key={field}>
@@ -67,10 +74,12 @@ const LoginPage = () => {
                 onChange={handleChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
-              {errors[field] && <p className="mt-1 text-sm text-red-600">{errors[field]}</p>}
+              {errors[field] && (
+                <p className="mt-1 text-sm text-red-600">{errors[field]}</p>
+              )}
             </div>
           ))}
-          
+
           <button
             type="submit"
             className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 text-lg"
@@ -78,9 +87,21 @@ const LoginPage = () => {
             Sign Up
           </button>
         </form>
-        
+
+        {/* Forgot Password Link */}
+        <div className="mt-2 text-center">
+          <a href="/forgot-password" className="text-blue-600 hover:underline">
+            Forgot Password?
+          </a>
+        </div>
+
         <div className="mt-6 text-center">
-          <p className="text-gray-700">Do not have an account? <a href="/" className="text-blue-600 hover:underline">Sign Up</a></p>
+          <p className="text-gray-700">
+            Do not have an account?{' '}
+            <a href="/" className="text-blue-600 hover:underline">
+              Sign Up
+            </a>
+          </p>
         </div>
       </div>
     </div>
