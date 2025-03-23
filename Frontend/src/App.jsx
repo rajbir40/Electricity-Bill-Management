@@ -2,6 +2,8 @@ import SignUpPage from './components/Signup';
 import LoginPage from './components/Login';
 import ForgotPassword from './components/ForgotPass';
 import Home from './components/Home';
+import About from './components/About';
+import Profile from './components/Profile';
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 function App() {
 
@@ -13,6 +15,8 @@ function App() {
           <Route path='/login' element={<LoginPage/>}/>
           <Route path='/home' element={<Home/>}/>
           <Route path='/forgot-password' element={<ForgotPassword/>}/>
+          <Route path='/about' element={<About/>}/>
+          <Route path='/profile' element={<Profile/>}/>
         </Routes>
       </BrowserRouter>
     </>
