@@ -1,14 +1,14 @@
-import React from 'react';
+import React,{useState} from 'react';
 import Navbar from './Navbar';
 import profile from '../assets/profile.jpg';
 
 export default function Profile() {
   const user = {
-    name: "Sarah Johnson",
-    email: "sarah.johnson@email.com",
-    phone: "(555) 123-4567",
-    address: "123 Electric Avenue, Power City, PC 12345",
-    meterNumber: "EL-87654321"
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    meterNumber: ""
   };
 
   const paidBills = [
@@ -16,10 +16,12 @@ export default function Profile() {
     { id: 2, month: "January 2025", amount: 132.75, paidDate: "February 12, 2025", billNumber: "INV-2501-87654" },
     { id: 3, month: "December 2024", amount: 145.20, paidDate: "January 8, 2025", billNumber: "INV-2412-87654" }
   ];
-
-  const pendingBills = [
+  const [pendingBills, setPendingBills] = useState([
     { id: 1, month: "March 2025", amount: 127.85, dueDate: "April 15, 2025", billNumber: "INV-2503-87654" }
-  ];
+  ]);
+  const addPendingBill=(newBill)=>{
+    setPendingBills([...pendingBills,newBill]);
+  }
 
   const CardWrapper = ({ header, children }) => (
     <div className="relative rounded-lg shadow-xl overflow-hidden 
@@ -38,14 +40,13 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen relative">
-      {/* Fixed background image with reduced brightness */}
       <div
         className="fixed inset-0 z-0"
         style={{
           backgroundImage: `url(${profile})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          filter: 'brightness(0.7)',   // Dim the image
+          filter: 'brightness(0.7)',   
         }}
       />
       
