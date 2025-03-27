@@ -21,6 +21,7 @@ function App() {
           <Route path='/profile' element={<Profile/>}/>
           <Route path='/admin/home' element={<AdminHome/>}/>
           <Route path='/admin/profile' element={<AdminProfile/>}/>
+          {/* <Route path='/admin/profile' element={<AdminProfile/>}/> */}
         </Routes>
       </BrowserRouter>
     </>

@@ -1,10 +1,26 @@
 const db = require('../lib/db');
 
-
 const getAllUsers = async (req, res) => {
     try {
         const sql = "SELECT * FROM Users;";
         db.query(sql, (err, results) => {
+            if (err) {
+                console.error("Database error:", err);
+                return res.status(500).json({ error: "Database error" });
+            }
+            return res.json(results);
+        });
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+};
+
+const getUser = async (req, res) => {
+    try {
+        const userid =  req.query.userid; 
+        const sql = "SELECT * FROM Users WHERE id = ?;";
+        db.query(sql,userid ,  (err, results) => {
             if (err) {
                 console.error("Database error:", err);
                 return res.status(500).json({ error: "Database error" });
@@ -37,4 +53,4 @@ const getBillingHistory = async (req , res)=> {
 };
 
 
-module.exports = { getAllUsers  , getBillingHistory};
+module.exports = { getAllUsers  , getBillingHistory , getUser};
