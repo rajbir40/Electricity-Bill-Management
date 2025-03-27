@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const db = require("./lib/db.js");
 const authRoutes = require('./routes/auth.route');
+const userRoutes = require('./routes/user.route.js');
+const meterRoutes = require('./routes/meter.route.js');
 const dotenv = require('dotenv');
 
 const app = express();
@@ -16,6 +18,8 @@ app.get("/", (req, res) => {
 });
 
 app.use('/api/auth',authRoutes);
+app.use('/api/user',userRoutes);
+app.use('/api/meter',meterRoutes);
 
 const PORT = process.env.PORT || 8080;
 
