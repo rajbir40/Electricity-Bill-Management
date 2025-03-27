@@ -45,7 +45,7 @@ export default function AdminHome() {
 
           {/* Card 3: Generate Bill */}
           <div className="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md">
-            <Link to="/generateBill" className="block text-center">
+            <Link to="/admin/generate-bill" className="block text-center">
               <h2 className="text-xl font-semibold text-gray-800 mb-4">
                 Generate Bill
               </h2>

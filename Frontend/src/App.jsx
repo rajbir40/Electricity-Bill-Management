@@ -8,6 +8,7 @@ import Profile from './components/Profile';
 import AdminProfile from './components/AdminProfile';
 import FindUser from './components/FindUser';
 import FindMeter from './components/FindMeter';
+import GenerateBill from './components/GenerateBill';
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 function App() {
 
@@ -25,6 +26,9 @@ function App() {
           <Route path='/admin/profile' element={<AdminProfile/>}/>
           <Route path='/admin/find-user' element={<FindUser/>}/>
           <Route path='/admin/find-meter' element={<FindMeter/>}/>
+          <Route path='/admin/find-meter' element={<FindMeter/>}/>
+          <Route path='/admin/generate-bill' element={<GenerateBill/>}/>
+          {/* <Route path='/admin/generate-bill' element={<GenerateBill/>}/> */}
           {/* <Route path='/admin/profile' element={<AdminProfile/>}/> */}
         </Routes>
       </BrowserRouter>
