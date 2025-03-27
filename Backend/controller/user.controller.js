@@ -18,9 +18,9 @@ const getAllUsers = async (req, res) => {
 
 const getUser = async (req, res) => {
     try {
-        const userid =  req.query.userid; 
-        const sql = "SELECT * FROM Users WHERE id = ?;";
-        db.query(sql,userid ,  (err, results) => {
+        const userid = req.query.userid; // or req.params.userid if that's how your route is defined
+        const sql = "SELECT * FROM Users WHERE user_id = ?;";
+        db.query(sql, userid, (err, results) => {
             if (err) {
                 console.error("Database error:", err);
                 return res.status(500).json({ error: "Database error" });
@@ -32,6 +32,7 @@ const getUser = async (req, res) => {
         return res.status(500).json({ error: "Internal server error" });
     }
 };
+
 
 
 const getBillingHistory = async (req , res)=> {

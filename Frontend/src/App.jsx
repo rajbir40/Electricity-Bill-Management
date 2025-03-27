@@ -6,6 +6,8 @@ import About from './components/About';
 import AdminHome from './components/AdminHome';
 import Profile from './components/Profile';
 import AdminProfile from './components/AdminProfile';
+import FindUser from './components/FindUser';
+import FindMeter from './components/FindMeter';
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 function App() {
 
@@ -21,6 +23,8 @@ function App() {
           <Route path='/profile' element={<Profile/>}/>
           <Route path='/admin/home' element={<AdminHome/>}/>
           <Route path='/admin/profile' element={<AdminProfile/>}/>
+          <Route path='/admin/find-user' element={<FindUser/>}/>
+          <Route path='/admin/find-meter' element={<FindMeter/>}/>
           {/* <Route path='/admin/profile' element={<AdminProfile/>}/> */}
         </Routes>
       </BrowserRouter>
