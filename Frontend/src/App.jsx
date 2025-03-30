@@ -28,8 +28,7 @@ function App() {
           <Route path='/admin/find-meter' element={<FindMeter/>}/>
           <Route path='/admin/find-meter' element={<FindMeter/>}/>
           <Route path='/admin/generate-bill' element={<GenerateBill/>}/>
-          {/* <Route path='/admin/generate-bill' element={<GenerateBill/>}/> */}
-          {/* <Route path='/admin/profile' element={<AdminProfile/>}/> */}
+          
         </Routes>
       </BrowserRouter>
     </>
