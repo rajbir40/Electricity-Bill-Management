@@ -1,4 +1,5 @@
 const db = require('../lib/db');
+const nodemailer = require('nodemailer');
 
 const  getUser = async (req,res) => {
     const meterid = req.query.meterid;
@@ -71,5 +72,57 @@ const createNewBill = async (req, res) => {
       return res.status(500).json({ error: "Internal server error" });
     }
   };
+
+  const sendReminder = async (req, res) => {
+    try {
+        const [rows] = await db.promise().query(
+            `SELECT b.bill_id, b.user_id, b.due_date, b.total_amount, u.email, u.phone
+            FROM Bills b
+            JOIN Users u ON b.user_id = u.user_id
+            WHERE b.due_date BETWEEN CURDATE() AND CURDATE() + INTERVAL 10 DAY
+            AND b.status = 'unpaid'`
+        );
+
+        if (!rows || rows.length === 0) {
+            return res.status(404).json({ error: "No bills found" });
+        }
+
+        console.log("Bills to notify:", rows);
+
+        const transporter = nodemailer.createTransport({    
+            service: 'gmail',
+            auth: {
+                user: process.env.GMAIL_USER,
+                pass: process.env.GMAIL_PASS
+            }
+        });
+
+        for (const row of rows) {
+            console.log(`Preparing to send email to: ${row.email}`);
+
+            const mailOptions = {
+                from: process.env.GMAIL_USER,
+                to: row.email,
+                subject: "Bill Reminder",
+                text: `Your bill for the month of ${row.billing_month} has not been paid. Please pay the bill by ${row.due_date}.`
+            };
+
+            try {
+                const info = await transporter.sendMail(mailOptions);
+                console.log(`✅ Email sent to ${row.email}: ${info.response}`);
+            } catch (error) {
+                console.error(`❌ Failed to send email to ${row.email}:`, error);
+            }
+        }
+
+        return res.status(200).json({ message: "Emails sent successfully" });
+
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+};
+
+
   
-module.exports = {getUser , createNewBill} ;
+module.exports = {getUser , createNewBill , sendReminder}; ;

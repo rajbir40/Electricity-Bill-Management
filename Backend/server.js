@@ -9,7 +9,7 @@ const dotenv = require('dotenv');
 const app = express();
 const bcrypt = require('bcrypt');
 app.use(express.json());
-app.use(cors());
+app.use(cors({origin: "http://localhost:5173",credentials: true}));
 require("dotenv").config();
 
 console.log(process.env.GMAIL_USER);

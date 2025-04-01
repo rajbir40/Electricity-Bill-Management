@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import signupBg from '../assets/signupBg.jpg';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+const host = import.meta.env.VITE_BACKEND_HOST
+
 const SignUpPage = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -46,15 +49,19 @@ const SignUpPage = () => {
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = validate();
     
     if (Object.keys(newErrors).length === 0) {
-      alert('Sign up successful! Redirecting to login page...');
-      console.log('Form submitted:', formData);
-      navigate('/login');
+      const response = await axios.post(`${host}/api/auth/signup`, formData);
+      if(response.status === 200){
+        alert('Sign up successful! Redirecting to login page...');
+        console.log('Form submitted:', formData);
+        navigate('/login');
+      }
     } else {
+      alert('Sign up failed! Please check the form.');
       setErrors(newErrors);
     }
   };
