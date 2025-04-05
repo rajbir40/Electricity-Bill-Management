@@ -1,6 +1,10 @@
-import React,{useState} from 'react';
+import React, { useState, useEffect } from 'react';
+import { io } from 'socket.io-client'; // ✅ Import socket.io client
 import Navbar from './Navbar';
 import profile from '../assets/profile.jpg';
+
+// ✅ Define socket connection outside the component or inside a useEffect
+const socket = io('http://localhost:5000'); // Replace with your backend URL and port
 
 export default function Profile() {
   const user = {
@@ -16,19 +20,43 @@ export default function Profile() {
     { id: 2, month: "January 2025", amount: 132.75, paidDate: "February 12, 2025", billNumber: "INV-2501-87654" },
     { id: 3, month: "December 2024", amount: 145.20, paidDate: "January 8, 2025", billNumber: "INV-2412-87654" }
   ];
+
   const [pendingBills, setPendingBills] = useState([
     { id: 1, month: "March 2025", amount: 127.85, dueDate: "April 15, 2025", billNumber: "INV-2503-87654" }
   ]);
-  const addPendingBill=(newBill)=>{
-    setPendingBills([...pendingBills,newBill]);
-  }
 
+  const addPendingBill = (newBill) => {
+    setPendingBills([...pendingBills, newBill]);
+  };
+
+  const [notifications, setNotifications] = useState([]);
+
+  const dismissNotification = (id) => {
+    setNotifications(notifications.filter(notification => notification.id !== id));
+  };
+
+  // ✅ Setup socket connection for real-time notifications
+  useEffect(() => {
+    socket.on('notification', (data) => {
+      setNotifications(prev => [
+        { id: Date.now(), message: data.message, date: new Date().toLocaleDateString() },
+        ...prev,
+      ]);
+    });
+
+    return () => {
+      socket.off('notification');
+    };
+  }, []);
+
+
+ 
   const CardWrapper = ({ header, children }) => (
     <div className="relative rounded-lg shadow-xl overflow-hidden 
                     transform hover:scale-105 transition-transform duration-300
                     bg-white/50 backdrop-blur-md mt-4">
       {header && (
-        <div className=" px-6 py-4" style={{backgroundColor:'#d0d0ab'}}>
+        <div className="px-6 py-4" style={{ backgroundColor: '#d0d0ab' }}>
           {header}
         </div>
       )}
@@ -46,25 +74,23 @@ export default function Profile() {
           backgroundImage: `url(${profile})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          filter: 'brightness(0.7)',   
+          filter: 'brightness(0.7)',
         }}
       />
-      
+
       {/* Scrollable content above the background */}
       <div className="relative z-10">
         <Navbar />
-        
+
         <div className="container mx-auto py-8 px-4">
           <h1 className="text-3xl font-bold text-[#d0d0ab] mb-6 text-center">My Profile</h1>
-          
+
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <CardWrapper style={{backgroundColor:'#d0d0ab'}}
+            <CardWrapper
               header={
                 <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-bold ">Account Information</h2>
-                  <button className=" text-sm font-medium">
-                    Edit
-                  </button>
+                  <h2 className="text-xl font-bold">Account Information</h2>
+                  <button className="text-sm font-medium">Edit</button>
                 </div>
               }
             >
@@ -75,12 +101,12 @@ export default function Profile() {
                   </span>
                 </div>
               </div>
-              
+
               <div className="text-center mb-4">
                 <h3 className="text-xl font-bold text-gray-800">{user.name}</h3>
                 <p className="text-gray-500">Customer since November 2022</p>
               </div>
-              
+
               <div className="space-y-3 border-t border-gray-100 pt-4">
                 <div className="flex">
                   <span className="font-medium text-gray-600 w-1/3">Email:</span>
@@ -100,7 +126,7 @@ export default function Profile() {
                 </div>
               </div>
             </CardWrapper>
-            
+
             {/* Pending Bills Card */}
             <CardWrapper header={<h2 className="text-xl font-bold">Pending Bills</h2>}>
               {pendingBills.length > 0 ? (
@@ -134,19 +160,17 @@ export default function Profile() {
                   <p className="text-gray-500">You have no pending bills!</p>
                 </div>
               )}
-              
+
               <div className="mt-4 text-sm text-gray-500">
                 <p className='text-blue-700'>Next bill generation date: April 30, 2025</p>
               </div>
             </CardWrapper>
-            
+
             <CardWrapper
               header={
                 <div className="flex items-center justify-between">
                   <h2 className="text-xl font-bold">Payment History</h2>
-                  <button className="text-sm font-medium">
-                    View All
-                  </button>
+                  <button className="text-sm font-medium">View All</button>
                 </div>
               }
             >
@@ -166,7 +190,7 @@ export default function Profile() {
                   </div>
                 ))}
               </div>
-              
+
               <div className="mt-6 border-t border-gray-100 pt-4">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-900">Last 3 months average:</span>
@@ -179,15 +203,46 @@ export default function Profile() {
               </div>
             </CardWrapper>
           </div>
-          
-          <CardWrapper header={
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold  text-center">Usage Overview</h2>
-              <button className=" text-sm font-medium">
-                View Detailed Analytics
-              </button>
-            </div>
-          }>
+
+          {/* Notifications Section */}
+          <CardWrapper header={<h2 className="text-xl font-bold">Notifications</h2>}>
+            {notifications.length > 0 ? (
+              <div className="space-y-4">
+                {notifications.map(notification => (
+                  <div key={notification.id} className="border border-gray-200 rounded-md p-4 bg-white flex justify-between items-center">
+                    <div>
+                      <p className="text-gray-800">{notification.message}</p>
+                      <p className="text-sm text-gray-500 mt-1">Date: {notification.date}</p>
+                    </div>
+                    <button 
+                      className="ml-4 text-red-600 hover:text-red-800 text-sm"
+                      onClick={() => dismissNotification(notification.id)}
+                    >
+                      Dismiss
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-10">
+                <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p className="text-gray-500">No notifications at the moment!</p>
+              </div>
+            )}
+          </CardWrapper>
+
+          <CardWrapper
+            header={
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-bold text-center">Usage Overview</h2>
+                <button className="text-sm font-medium">
+                  View Detailed Analytics
+                </button>
+              </div>
+            }
+          >
             <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="border border-gray-200 rounded-md p-4 text-center bg-white">
                 <p className="text-gray-500 text-sm">Current Month</p>
@@ -195,7 +250,7 @@ export default function Profile() {
                 <p className="text-xs text-red-600">↑ 5% from last month</p>
               </div>
               <div className="border border-gray-200 rounded-md p-4 text-center bg-white">
-                <p className="text-gray-500 text-sm ">Monthly Average</p>
+                <p className="text-gray-500 text-sm">Monthly Average</p>
                 <p className="text-2xl font-bold text-gray-800">462 kWh</p>
                 <p className="text-xs text-green-600">↓ 2% from last year</p>
               </div>
