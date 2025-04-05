@@ -59,6 +59,18 @@ export default function AdminHome() {
               </button>
             </Link>
           </div>
+
+          <div className="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md">
+            <img src={bill} alt="" />
+            <Link to="/admin/bill-page" className="block text-center">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                View All Bills
+              </h2>
+              <button className="w-full py-2 px-4 bg-green-600 text-white rounded-md shadow hover:bg-blue-700 transition-colors">
+                 View All Bills
+              </button>
+            </Link>
+          </div>
         </div>
       </div>
     </div>

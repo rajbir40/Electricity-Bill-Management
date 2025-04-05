@@ -10,6 +10,7 @@ import FindUser from './components/FindUser';
 import FindMeter from './components/FindMeter';
 import GenerateBill from './components/GenerateBill';
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
+import BillPage from './components/BillPage';
 function App() {
 
   return (
@@ -28,6 +29,7 @@ function App() {
           <Route path='/admin/find-meter' element={<FindMeter/>}/>
           <Route path='/admin/find-meter' element={<FindMeter/>}/>
           <Route path='/admin/generate-bill' element={<GenerateBill/>}/>
+          <Route path='/admin/bill-page' element={<BillPage/>}/>
           
         </Routes>
       </BrowserRouter>
