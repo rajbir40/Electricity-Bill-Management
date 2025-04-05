@@ -55,7 +55,7 @@ const SignUpPage = () => {
     
     if (Object.keys(newErrors).length === 0) {
       const response = await axios.post(`${host}/api/auth/signup`, formData);
-      if(response.status === 200){
+      if(response.status ===201){
         alert('Sign up successful! Redirecting to login page...');
         console.log('Form submitted:', formData);
         navigate('/login');

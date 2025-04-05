@@ -1,8 +1,23 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from './Navbar';
 import home from '../assets/home.jpg';
+import axios from 'axios';
 
 export default function Home() {
+  const [bills, setBills] = useState([]);
+
+  useEffect(() => {
+    const fetchBills = async () => {
+      try {
+        const response = await axios.get('http://localhost:4000/api/bills');
+        setBills(response.data);
+      } catch (error) {
+        console.error('Error fetching bills:', error);
+      }
+    };
+    fetchBills();
+  }, []);
+
   return (
     <div>
       <Navbar />
@@ -22,76 +37,29 @@ export default function Home() {
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h2 className="text-2xl font-bold mb-4 text-center">Due Bills</h2>
             <div className="border border-gray-200 rounded-md mb-4">
-              <div className="p-4 border-b border-gray-200">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="font-semibold">March 2025</p>
-                    <p className="text-sm text-gray-500">Due on: April 15, 2025</p>
+              {bills.length > 0 ? (
+                bills.map((bill) => (
+                  <div key={bill.bill_id} className="p-4 border-b border-gray-200 flex justify-between items-center">
+                    <div>
+                      <p className="font-semibold">{new Date(bill.billing_month).toLocaleString('default', { month: 'long', year: 'numeric' })}</p>
+                      <p className="text-sm text-gray-500">Due on: {new Date(bill.due_date).toLocaleDateString()}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-bold text-lg">${bill.total_amount.toFixed(2)}</p>
+                      {new Date(bill.due_date) < new Date() ? (
+                        <p className="text-xs text-red-500">Fine $50</p>
+                      ) : (
+                        <p className="text-xs text-red-500">{Math.ceil((new Date(bill.due_date) - new Date()) / (1000 * 60 * 60 * 24))} days remaining</p>
+                      )}
+                      <button className="mt-2 bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700">Pay Now</button>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <p className="font-bold text-lg">$127.85</p>
-                    <p className="text-xs text-red-500">3 days remaining</p>
-                  </div>
-                </div>
-              </div>
-              <div className="p-4">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="font-semibold">February 2025</p>
-                    <p className="text-sm text-gray-500">Due on: March 15, 2025</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-bold text-lg">$119.40</p>
-                    <p className="text-xs text-green-500">Paid</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="flex justify-end">
-              <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                View All Bills →
-              </button>
+                ))
+              ) : (
+                <p className="text-center text-gray-500">No unpaid bills available.</p>
+              )}
             </div>
           </div>
-
-          {/* Pay Bill Form */}
-          <form className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold mb-4 text-center">Pay Your Bill</h2>
-            <div className="mb-4">
-              <label
-                htmlFor="meterNumber"
-                className="block text-gray-700 mb-2"
-              >
-                Meter Number
-              </label>
-              <input
-                type="text"
-                id="meterNumber"
-                placeholder="Enter meter number"
-                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                htmlFor="accountNumber"
-                className="block text-gray-700 mb-2"
-              >
-                Account Number
-              </label>
-              <input
-                type="text"
-                id="accountNumber"
-                placeholder="Enter account number"
-                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full bg-orange-600 text-white p-2 rounded-md hover:bg-green-700 transition-colors"
-            >
-              Pay Bill
-            </button>
-          </form>
         </div>
       </div>
     </div>
