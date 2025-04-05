@@ -9,6 +9,7 @@ import AdminProfile from './components/AdminProfile';
 import FindUser from './components/FindUser';
 import FindMeter from './components/FindMeter';
 import GenerateBill from './components/GenerateBill';
+import Bill from './components/Bill';
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import BillPage from './components/BillPage';
 function App() {
@@ -29,8 +30,12 @@ function App() {
           <Route path='/admin/find-meter' element={<FindMeter/>}/>
           <Route path='/admin/find-meter' element={<FindMeter/>}/>
           <Route path='/admin/generate-bill' element={<GenerateBill/>}/>
+<<<<<<< Updated upstream
           <Route path='/admin/bill-page' element={<BillPage/>}/>
           
+=======
+>>>>>>> Stashed changes
+          <Route path='/bill' element={<Bill/>}/>
         </Routes>
       </BrowserRouter>
     </>

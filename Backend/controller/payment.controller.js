@@ -23,5 +23,41 @@ const recordPayment = async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
       }
 };
+const unpaidBills = async(req,res)=>{
+  try {
+    const query = `
+    SELECT *,
+      CASE 
+        WHEN due_date < CURDATE() THEN total_amount + 50 
+        ELSE total_amount 
+      END AS final_amount,
+      CASE 
+        WHEN due_date < CURDATE() THEN 'overdue' 
+        ELSE status 
+      END AS updated_status
+    FROM Bills WHERE status = 'unpaid' OR status = 'overdue';`;
+    db.query(query, (err, results) => {
+      if (err) {
+        console.error('Error fetching unpaid bills:', err);
+        return res.status(500).json({ message: 'Server error' });
+      }
+      res.json(results);
+    });
+  } catch (error) {
+    
+  }
+}
+const payBill = async(req,res)=>{
+  const { bill_id } = req.params;
+  const updateQuery = "UPDATE Bills SET status = 'paid' WHERE bill_id = ?";
+  
+  db.query(updateQuery, [bill_id], (err, result) => {
+    if (err) {
+      console.error('Error updating bill status:', err);
+      return res.status(500).json({ message: 'Server error' });
+    }
+    res.json({ message: 'Payment successful' });
+  });
+}
 
-module.exports = { recordPayment };
+module.exports = { recordPayment, unpaidBills, payBill};
