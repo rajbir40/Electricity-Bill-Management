@@ -7,6 +7,7 @@ const BillPage = () => {
   const [sortField, setSortField] = useState('');
   const [sortOrder, setSortOrder] = useState('asc');
   const [filterStatus, setFilterStatus] = useState('');
+  const [filterFine, setFilterFine] = useState('all');
 
   // Fetch bills from API
   useEffect(() => {
@@ -34,15 +35,15 @@ const BillPage = () => {
       let bField = b[sortField];
 
       // Convert dates to Date objects for comparison
-      if (['billing_month', 'due_date', 'generated_at'].includes(sortField)) {
-        aField = new Date(aField);
-        bField = new Date(bField);
+      if (['billing_month', 'due_date', 'generated_at', 'fine_date'].includes(sortField)) {
+        aField = aField ? new Date(aField) : new Date(0);
+        bField = bField ? new Date(bField) : new Date(0);
       }
 
       // Convert numeric strings to numbers for sorting
-      if (['units_consumed', 'total_amount'].includes(sortField)) {
-        aField = parseFloat(aField);
-        bField = parseFloat(bField);
+      if (['units_consumed', 'total_amount', 'fine_amount'].includes(sortField)) {
+        aField = aField ? parseFloat(aField) : 0;
+        bField = bField ? parseFloat(bField) : 0;
       }
 
       if (aField < bField) return sortOrder === 'asc' ? -1 : 1;
@@ -52,10 +53,16 @@ const BillPage = () => {
     return 0;
   });
 
-  // Filter bills by status if a filter is selected
-  const filteredBills = filterStatus
+  // Filter bills by status and fine presence if filters are selected
+  let filteredBills = filterStatus
     ? sortedBills.filter(bill => bill.status.toLowerCase() === filterStatus.toLowerCase())
     : sortedBills;
+
+  if (filterFine !== 'all') {
+    filteredBills = filteredBills.filter(bill =>
+      filterFine === 'with' ? bill.fine_id !== null : bill.fine_id === null
+    );
+  }
 
   return (
     <div className="container mx-auto p-4">
@@ -75,6 +82,8 @@ const BillPage = () => {
             <option value="total_amount">Total Amount</option>
             <option value="due_date">Due Date</option>
             <option value="generated_at">Generated At</option>
+            <option value="fine_amount">Fine Amount</option>
+            <option value="fine_date">Fine Date</option>
           </select>
           <select
             className="p-2 border rounded"
@@ -85,7 +94,7 @@ const BillPage = () => {
             <option value="desc">Descending</option>
           </select>
         </div>
-        {/* Filter Control */}
+        {/* Filter Controls */}
         <div className="flex items-center space-x-2 mt-2 md:mt-0">
           <label className="font-medium">Filter by Status:</label>
           <select
@@ -96,6 +105,16 @@ const BillPage = () => {
             <option value="">All</option>
             <option value="paid">Paid</option>
             <option value="unpaid">Unpaid</option>
+          </select>
+          <label className="font-medium">Filter by Fine:</label>
+          <select
+            className="p-2 border rounded"
+            value={filterFine}
+            onChange={(e) => setFilterFine(e.target.value)}
+          >
+            <option value="all">All</option>
+            <option value="with">With Fine</option>
+            <option value="without">Without Fine</option>
           </select>
         </div>
       </div>
@@ -119,6 +138,10 @@ const BillPage = () => {
                 <th className="px-4 py-2 border">Due Date</th>
                 <th className="px-4 py-2 border">Status</th>
                 <th className="px-4 py-2 border">Generated At</th>
+                <th className="px-4 py-2 border">Fine ID</th>
+                <th className="px-4 py-2 border">Fine Amount</th>
+                <th className="px-4 py-2 border">Fine Reason</th>
+                <th className="px-4 py-2 border">Fine Date</th>
               </tr>
             </thead>
             <tbody>
@@ -138,6 +161,12 @@ const BillPage = () => {
                   <td className="px-4 py-2 border">{bill.status}</td>
                   <td className="px-4 py-2 border">
                     {new Date(bill.generated_at).toLocaleDateString()}
+                  </td>
+                  <td className="px-4 py-2 border">{bill.fine_id ? bill.fine_id : 'N/A'}</td>
+                  <td className="px-4 py-2 border">{bill.fine_amount ? bill.fine_amount : 'N/A'}</td>
+                  <td className="px-4 py-2 border">{bill.fine_reason ? bill.fine_reason : 'N/A'}</td>
+                  <td className="px-4 py-2 border">
+                    {bill.fine_date ? new Date(bill.fine_date).toLocaleDateString() : 'N/A'}
                   </td>
                 </tr>
               ))}
