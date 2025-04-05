@@ -58,13 +58,14 @@ const login = async (req, res) => {
                   return res.status(401).json({ error: "Invalid email or password" });
               }
               const token = jwt.sign(
-                { id: user.user_id, email: user.email, role: user.role },
+                { id: user.user_id },
                 process.env.JWT_SECRET,
                 { expiresIn: '1h' }
               );
   
               // Success response
-              res.status(200).json({ message: "Login successful", userId: user.id });
+            //   console.log(token);
+              res.status(200).json({ message: "Login successful", token: token });
           });
       } catch (error) {
           console.error("Internal server error:", error);
@@ -162,4 +163,16 @@ console.log("Password:", process.env.GMAIL_PASS ? "Loaded" : "Not Loaded");
         res.json({ message: "Password reset successful" });
     })
   }
-module.exports = { signup, login, forgotpassword , verifyOTP, resetPassword};
+
+  const checkingAuth = async(req,res) => {
+    try{
+      res.status(200).json(req.user);
+    }
+    catch(err){
+      console.log("Error checking auth",err.message);
+      res.status(500).json({message:"Internal Server Error"});
+    }
+  }
+  
+
+module.exports = { signup, login, forgotpassword , verifyOTP, resetPassword , checkingAuth};

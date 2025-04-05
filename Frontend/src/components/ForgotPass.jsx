@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import signupBg from '../assets/signupBg.jpg';
 import { useNavigate } from 'react-router-dom';
+const host = import.meta.env.VITE_BACKEND_HOST
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ const ForgotPassword = () => {
 
   const requestOtp = async () => {
     try {
-      const res = await axios.post('http://localhost:8080/api/auth/forgot-password', { email });
+      const res = await axios.post('${host}/api/auth/forgot-password', { email });
       setMessage(res.data.message);
       setStep(2);
     } catch (error) {
@@ -24,7 +25,7 @@ const ForgotPassword = () => {
 
   const verifyOtp = async () => {
     try {
-      const res = await axios.post('http://localhost:8080/api/auth/verify-otp', { email, otp });
+      const res = await axios.post('${host}/api/auth/verify-otp', { email, otp });
       setMessage(res.data.message);
       setStep(3);
     } catch (error) {
@@ -34,7 +35,7 @@ const ForgotPassword = () => {
 
   const resetPassword = async () => {
     try {
-      const res = await axios.post('http://localhost:8080/api/auth/reset-password', { email, password:newPassword });
+      const res = await axios.post('${host}/api/auth/reset-password', { email, password:newPassword });
       setMessage(res.data.message);
       navigate('/login');
     } catch (error) {

@@ -17,4 +17,17 @@ const getAllBills = async(req , res)=>{
     }
 }
 
-module.exports = { getAllBills};
+const getPendingBills = async (req,res) => {
+    try{
+        const user_id = req.params.user_id;
+        const query = `SELECT * FROM Bills WHERE user_id = ? AND status = 'unpaid'`;
+        const bills = await db.promise().query(query,[user_id]);
+        res.status(200).json(bills[0]);
+    }
+    catch(error){
+        console.log(error);
+        res.status(500).json({error:"Internal Server Error"});
+    }
+}
+
+module.exports = {getPendingBills ,getAllBills};

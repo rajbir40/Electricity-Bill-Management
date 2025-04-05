@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import SignUpPage from './components/Signup';
 import LoginPage from './components/Login';
 import ForgotPassword from './components/ForgotPass';
@@ -10,31 +11,49 @@ import FindUser from './components/FindUser';
 import FindMeter from './components/FindMeter';
 import GenerateBill from './components/GenerateBill';
 import Bill from './components/Bill';
-import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import BillPage from './components/BillPage';
+import {BrowserRouter, Routes, Route , Navigate} from 'react-router-dom';
+import { authStore } from './store/auth.store';
+import {Loader} from "lucide-react";
+
 function App() {
+
+  const {authUser,checkAuth,isCheckingAuth} = authStore();
+  useEffect(() => {
+    checkAuth();
+  },[checkAuth])
+  // console.log(authUser);
+
+  if(isCheckingAuth && !authUser){
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader className="animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <>
       <BrowserRouter>
         <Routes>
-          <Route path='/' element={<SignUpPage/>}/>
+          {/* Public Routes */}
           <Route path='/login' element={<LoginPage/>}/>
-          <Route path='/home' element={<Home/>}/>
           <Route path='/forgot-password' element={<ForgotPassword/>}/>
           <Route path='/about' element={<About/>}/>
-          <Route path='/profile' element={<Profile/>}/>
-          <Route path='/admin/home' element={<AdminHome/>}/>
-          <Route path='/admin/profile' element={<AdminProfile/>}/>
-          <Route path='/admin/find-user' element={<FindUser/>}/>
-          <Route path='/admin/find-meter' element={<FindMeter/>}/>
-          <Route path='/admin/find-meter' element={<FindMeter/>}/>
-          <Route path='/admin/generate-bill' element={<GenerateBill/>}/>
-<<<<<<< Updated upstream
           <Route path='/admin/bill-page' element={<BillPage/>}/>
+          {/* <Route path='/home' element={<Home/>}/> */}
+
+          {/* Authenticated Routes */}
+          <Route path="/" element={authUser ? <Home/> : <Navigate to="/login" />} />
+          <Route path='/home' element={authUser ? <Home/> : <Navigate to="/login" />}/>
+          <Route path='/profile' element={authUser ? <Profile/> : <Navigate to="/login" />}/>
+          <Route path='/admin/home' element={authUser ? <AdminHome/> : <Navigate to="/login" />}/>
+          <Route path='/admin/profile' element={authUser ? <AdminProfile/> : <Navigate to="/login" />}/>
+          <Route path='/admin/find-user' element={authUser ? <FindUser/> : <Navigate to="/login" />}/>
+          <Route path='/admin/find-meter' element={authUser ? <FindMeter/>: <Navigate to="/login" />}/>
+          <Route path='/admin/find-meter' element={authUser ? <FindMeter/> : <Navigate to="/login" />}/>
+          <Route path='/admin/generate-bill' element={authUser ? <GenerateBill/> : <Navigate to="/login" />}/>
           
-=======
->>>>>>> Stashed changes
           <Route path='/bill' element={<Bill/>}/>
         </Routes>
       </BrowserRouter>

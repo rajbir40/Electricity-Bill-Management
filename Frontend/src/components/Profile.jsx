@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { io } from 'socket.io-client'; // ✅ Import socket.io client
+// import { io } from 'socket.io-client'; // ✅ Import socket.io client
 import Navbar from './Navbar';
 import profile from '../assets/profile.jpg';
+import axios from 'axios';
+const host = import.meta.env.VITE_BACKEND_HOST
+import { authStore } from '../store/auth.store';
 
 // ✅ Define socket connection outside the component or inside a useEffect
-const socket = io('http://localhost:5000'); // Replace with your backend URL and port
+// const socket = io('http://localhost:5000'); // Replace with your backend URL and port
 
 export default function Profile() {
+
+  const {authUser} = authStore();
+
   const user = {
     name: "",
     email: "",
@@ -14,6 +20,35 @@ export default function Profile() {
     address: "",
     meterNumber: ""
   };
+
+  const [userDetails, setUserDetails] = useState(user);
+  const [meterNumber, setMeterNumber] = useState('');
+
+  const fetchUserDetails = async () => {
+    try {
+      const user_id = authUser[0].user_id;
+      const response = await axios.get(`${host}/api/user/get/${user_id}`);
+      setUserDetails(response.data[0]);
+    } catch (error) {
+      console.error('Error fetching user details:', error);
+    }
+  };
+
+  const fetchMeterNumber = async () => {
+    try {
+      const user_id = authUser[0].user_id;
+      const response = await axios.get(`${host}/api/user/get/${user_id}`);
+      setMeterNumber(response.data[0].meter_number);
+    } catch (error) {
+      console.error('Error fetching meter number:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserDetails();
+  }, []);
+
+  // console.log(userDetails[0]);
 
   const paidBills = [
     { id: 1, month: "February 2025", amount: 119.40, paidDate: "March 10, 2025", billNumber: "INV-2502-87654" },
@@ -36,18 +71,18 @@ export default function Profile() {
   };
 
   // ✅ Setup socket connection for real-time notifications
-  useEffect(() => {
-    socket.on('notification', (data) => {
-      setNotifications(prev => [
-        { id: Date.now(), message: data.message, date: new Date().toLocaleDateString() },
-        ...prev,
-      ]);
-    });
+  // useEffect(() => {
+  //   socket.on('notification', (data) => {
+  //     setNotifications(prev => [
+  //       { id: Date.now(), message: data.message, date: new Date().toLocaleDateString() },
+  //       ...prev,
+  //     ]);
+  //   });
 
-    return () => {
-      socket.off('notification');
-    };
-  }, []);
+  //   return () => {
+  //     socket.off('notification');
+  //   };
+  // }, []);
 
 
  
@@ -110,19 +145,19 @@ export default function Profile() {
               <div className="space-y-3 border-t border-gray-100 pt-4">
                 <div className="flex">
                   <span className="font-medium text-gray-600 w-1/3">Email:</span>
-                  <span className="text-gray-800">{user.email}</span>
+                  <span className="text-gray-800">{userDetails.email}</span>
                 </div>
                 <div className="flex">
                   <span className="font-medium text-gray-600 w-1/3">Phone:</span>
-                  <span className="text-gray-800">{user.phone}</span>
+                  <span className="text-gray-800">{userDetails.phone}</span>
                 </div>
                 <div className="flex">
                   <span className="font-medium text-gray-600 w-1/3">Address:</span>
-                  <span className="text-gray-800">{user.address}</span>
+                  <span className="text-gray-800">{userDetails.address}</span>
                 </div>
                 <div className="flex">
                   <span className="font-medium text-gray-600 w-1/3">Meter #:</span>
-                  <span className="text-gray-800">{user.meterNumber}</span>
+                  <span className="text-gray-800">{userDetails.meterNumber}</span>
                 </div>
               </div>
             </CardWrapper>

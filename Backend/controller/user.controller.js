@@ -18,7 +18,7 @@ const getAllUsers = async (req, res) => {
 
 const getUser = async (req, res) => {
     try {
-        const userid = req.query.userid; // or req.params.userid if that's how your route is defined
+        const userid = req.params.user_id; // or req.params.userid if that's how your route is defined
         const sql = "SELECT * FROM Users WHERE user_id = ?;";
         db.query(sql, userid, (err, results) => {
             if (err) {

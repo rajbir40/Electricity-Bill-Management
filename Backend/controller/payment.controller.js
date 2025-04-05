@@ -13,9 +13,11 @@ const recordPayment = async (req, res) => {
           VALUES (?, ?, ?, ?, ?)
         `;
     
-        const [rows] = await db.promise().query(query, [bill_id, user_id, amount_paid, payment_method, transaction_id]);
+        const [payment] = await db.promise().query(query, [bill_id, user_id, amount_paid, payment_method, transaction_id]);
     
         const [bill] = await db.promise().query(`UPDATE Bills SET status = 'paid' WHERE bill_id = ?`, [bill_id]);
+
+        generateBill(bill_id,user_id,payment)
     
         res.status(200).json({ success: true, message: "Payment recorded successfully" });
       } catch (error) {
