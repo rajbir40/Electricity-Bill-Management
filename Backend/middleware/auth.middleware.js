@@ -11,7 +11,7 @@ const authMiddleware = async (req, res, next) =>{
         const token = authHeader.split(" ")[1]; 
         // console.log(token);
         const decode = jwt.verify(token, process.env.JWT_SECRET);
-        const query = `SELECT user_id FROM Users WHERE user_id = ?`;
+        const query = `SELECT * FROM Users WHERE user_id = ?`;
         const user = await db.promise().query(query, [decode.id]);
         // console.log(decode);
         // console.log(user[0]);

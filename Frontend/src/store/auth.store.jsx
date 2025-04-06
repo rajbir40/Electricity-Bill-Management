@@ -24,8 +24,8 @@ export const authStore = create((set) => ({
             if(!response){
                 console.log("No response")
             }
-            console.log(response.data);
-            set({ authUser: response.data, isCheckingAuth: false });
+            // console.log(response.data[0]);
+            set({ authUser: response.data[0], isCheckingAuth: false });
         } catch (error) {
             console.error("Error in checkAuth:", error.message);
             set({ isCheckingAuth: false }); // Ensure state updates even on error

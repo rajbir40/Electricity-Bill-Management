@@ -1,17 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect} from 'react';
 import Navbar from './Navbar';
+import { useLocation } from 'react-router-dom';
+import axios from 'axios';
+import { authStore } from '../store/auth.store';
+const host = import.meta.env.VITE_BACKEND_HOST;
 
 export default function Bill() {
-  const [formData, setFormData] = useState({
-    accountNumber: '',
-    name: '',
-    amount: '',
-    email: '',
-    paymentMethod: 'creditCard'
-  });
+
+  const location = useLocation();
+  const { billId } = location.state || {};
+  const { authUser } = authStore();
+
+  const [bill, setBill] = useState(null);
+  const [user, setUser] = useState(null);
+
+  const fetchBill = async () => {
+    try {
+      const response = await axios.get(`${host}/api/bill/fetch/${billId}`); 
+      setBill(response.data[0]);
+    } catch (error) {
+      console.error("Error fetching bill:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchBill();
+    setUser(authUser);
+  }, []);
+
+  // console.log(bill);
+  // console.log(user);
   
   const [isLoading, setIsLoading] = useState(false);
   const [isPaid, setIsPaid] = useState(false);
+  const [formData, setFormData] = useState({
+    accountNumber: '',
+    paymentMethod: 'creditCard'
+  });
 
   const handleChange = (e) => {
     setFormData({
@@ -69,7 +94,7 @@ export default function Bill() {
                     type="text"
                     id="name"
                     name="name"
-                    value={formData.name}
+                    value={user ? user.fullName : ''}
                     onChange={handleChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     required
@@ -84,7 +109,7 @@ export default function Bill() {
                     type="number"
                     id="amount"
                     name="amount"
-                    value={formData.amount}
+                    value={bill ? bill.total_amount : ''}
                     onChange={handleChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     required
@@ -101,7 +126,7 @@ export default function Bill() {
                     type="email"
                     id="email"
                     name="email"
-                    value={formData.email}
+                    value={user ? user.email : ''}
                     onChange={handleChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     required
@@ -167,7 +192,7 @@ export default function Bill() {
                     A confirmation receipt will be sent to your email after payment
                   </div>
                   <div className="text-lg font-bold text-gray-900">
-                    Total: ${formData.amount || '0.00'}
+                    Total: ${bill ? bill.total_amount : 'Loading...'}
                   </div>
                 </div>
                 

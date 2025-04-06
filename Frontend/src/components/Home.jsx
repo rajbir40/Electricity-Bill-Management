@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Navigate, Link } from 'react-router-dom';
+import { Navigate, Link} from 'react-router-dom';
 import Navbar from './Navbar';
 import home from '../assets/home.jpg';
 import axios from 'axios';
 import { authStore } from '../store/auth.store';
+import { useNavigate } from 'react-router-dom';
 
 const host = import.meta.env.VITE_BACKEND_HOST;
 
 export default function Home() {
   const { authUser } = authStore();
+  const navigate = useNavigate();
+  
 
   if (!authUser) {
     return <Navigate to="/login" />;
@@ -22,24 +25,21 @@ export default function Home() {
 
   const fetchDueBills = async () => {
     try {
-      const user_id = authUser[0].user_id;
+      const user_id = authUser.user_id;
       const response = await axios.get(`${host}/api/bill/due-bills/${user_id}`);
       setDueBills(response.data);
     } catch (error) {
       console.error("Error fetching due bills:", error);
     }
   };
+  
 
   const handlePayBill = async (billId) => {
     try {
-      const response = await axios.post(`${host}/api/bill/pay`, { bill_id: billId });
-      if (response.status === 200) {
-        alert("Payment successful!");
-        fetchDueBills(); // Refresh the list after payment
-      }
+      navigate('/bill', { state: { billId } });
     } catch (error) {
       console.error("Payment failed:", error);
-      alert("Payment failed. Please try again.");
+      alert("Please try again later.");
     }
   };
 
