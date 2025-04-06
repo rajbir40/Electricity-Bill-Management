@@ -15,6 +15,13 @@ export default function Profile() {
     address: "",
     meterNumber: ""
   });
+  // Local state for edit mode values
+  const [editData, setEditData] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    address: ""
+  });
   const [editMode, setEditMode] = useState(false);
 
   const fetchUserDetails = async () => {
@@ -22,7 +29,6 @@ export default function Profile() {
       const user_id = authUser[0].user_id;
       const response = await axios.get(`${host}/api/user/get/${user_id}`);
       setUserDetails(response.data[0]);
-      console.log("Fetched user data:", response.data[0]);
     } catch (error) {
       console.error('Error fetching user details:', error);
     }
@@ -30,17 +36,33 @@ export default function Profile() {
 
   const handleUpdate = async () => {
     try {
-      await axios.put(`${host}/api/user/update/${authUser[0].user_id}`, userDetails);
+      // Merge the editData into userDetails for update
+      const updatedDetails = { ...userDetails, ...editData };
+      await axios.put(`${host}/api/user/update/${authUser[0].user_id}`, updatedDetails);
       alert("Profile updated successfully");
+      setUserDetails(updatedDetails);
     } catch (error) {
       console.error("Update failed", error);
       alert("Update failed");
     }
   };
 
+  // When userDetails are fetched, update editData if not in editMode
   useEffect(() => {
     fetchUserDetails();
   }, []);
+
+  // When switching to edit mode, initialize editData with current userDetails
+  useEffect(() => {
+    if (editMode) {
+      setEditData({
+        fullName: userDetails.fullName,
+        email: userDetails.email,
+        phone: userDetails.phone,
+        address: userDetails.address,
+      });
+    }
+  }, [editMode, userDetails]);
 
   const paidBills = [
     { id: 1, month: "February 2025", amount: 119.40, paidDate: "March 10, 2025", billNumber: "INV-2502-87654" },
@@ -76,7 +98,6 @@ export default function Profile() {
     </div>
   );
 
-  console.log("Current userDetails state:", userDetails);
 
   return (
     <div className="min-h-screen relative">
@@ -97,91 +118,91 @@ export default function Profile() {
           <h1 className="text-3xl font-bold text-[#d0d0ab] mb-6 text-center">My Profile</h1>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <CardWrapper
-  header={
-    <div className="flex items-center justify-between">
-      <h2 className="text-xl font-bold">Account Information</h2>
-      <button
-        className="text-sm font-medium"
-        onClick={() => {
-          if (editMode) handleUpdate();
-          setEditMode(!editMode);
-        }}
-      >
-        {editMode ? "Save" : "Edit"}
-      </button>
-    </div>
-  }
->
-  <div className="flex justify-center mb-4">
-    <div className="h-24 w-24 rounded-full bg-gray-200 flex items-center justify-center border-4 border-blue-200">
-      <span className="text-2xl font-bold text-blue-600">
-        {userDetails.fullName?.split(' ').map(n => n[0]).join('')}
-      </span>
-    </div>
-  </div>
-  <div className="text-center mb-4">
-    <h3 className="text-xl font-bold text-gray-800">{userDetails.fullName}</h3>
-    <p className="text-gray-500">Customer since November 2022</p>
-  </div>
-  {editMode ? (
-    <>
-      <input
-        className="w-full p-2 border rounded mb-2"
-        value={userDetails.fullName}
-        onChange={(e) =>
-          setUserDetails({ ...userDetails, fullName: e.target.value })
-        }
-        placeholder="Full Name"
-      />
-      <input
-        className="w-full p-2 border rounded mb-2"
-        value={userDetails.email}
-        onChange={(e) =>
-          setUserDetails({ ...userDetails, email: e.target.value })
-        }
-        placeholder="Email"
-      />
-      <input
-        className="w-full p-2 border rounded mb-2"
-        value={userDetails.phone}
-        onChange={(e) =>
-          setUserDetails({ ...userDetails, phone: e.target.value })
-        }
-        placeholder="Phone"
-      />
-      <input
-        className="w-full p-2 border rounded mb-2"
-        value={userDetails.address}
-        onChange={(e) =>
-          setUserDetails({ ...userDetails, address: e.target.value })
-        }
-        placeholder="Address"
-      />
-      {/* Do not include meterNumber in edit mode */}
-    </>
-  ) : (
-    <div className="space-y-3 border-t border-gray-100 pt-4">
-      <div className="flex">
-        <span className="font-medium text-gray-600 w-1/3">Email:</span>
-        <span className="text-gray-800">{userDetails.email}</span>
-      </div>
-      <div className="flex">
-        <span className="font-medium text-gray-600 w-1/3">Phone:</span>
-        <span className="text-gray-800">{userDetails.phone}</span>
-      </div>
-      <div className="flex">
-        <span className="font-medium text-gray-600 w-1/3">Address:</span>
-        <span className="text-gray-800">{userDetails.address}</span>
-      </div>
-      <div className="flex">
-        <span className="font-medium text-gray-600 w-1/3">Meter #:</span>
-        <span className="text-gray-800">{userDetails.meterNumber}</span>
-      </div>
-    </div>
-  )}
-</CardWrapper>
-
+            <CardWrapper
+              header={
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-bold">Account Information</h2>
+                  <button
+                    className="text-sm font-medium hover:cursor-pointer hover:bg-gray-200 bg-amber-50 rounded-md pl-3 pr-3 pt-2 pb-2"
+                    onClick={() => {
+                      if (editMode) {
+                        handleUpdate();
+                      }
+                      setEditMode(!editMode);
+                    }}
+                  >
+                    {editMode ? "Save" : "Edit"}
+                  </button>
+                </div>
+              }
+            >
+              <div className="flex justify-center mb-4">
+                <div className="h-24 w-24 rounded-full bg-gray-200 flex items-center justify-center border-4 border-blue-200">
+                  <span className="text-2xl font-bold text-blue-600">
+                    {userDetails.fullName?.split(' ').map(n => n[0]).join('')}
+                  </span>
+                </div>
+              </div>
+              <div className="text-center mb-4">
+                <h3 className="text-xl font-bold text-gray-800">{userDetails.fullName}</h3>
+                <p className="text-gray-500">Customer since November 2022</p>
+              </div>
+              {editMode ? (
+                <>
+                  <input
+                    className="w-full p-2 border rounded mb-2"
+                    value={editData.fullName}
+                    onChange={(e) =>
+                      setEditData({ ...editData, fullName: e.target.value })
+                    }
+                    placeholder="Full Name"
+                  />
+                  <input
+                    className="w-full p-2 border rounded mb-2"
+                    value={editData.email}
+                    onChange={(e) =>
+                      setEditData({ ...editData, email: e.target.value })
+                    }
+                    placeholder="Email"
+                  />
+                  <input
+                    className="w-full p-2 border rounded mb-2"
+                    value={editData.phone}
+                    onChange={(e) =>
+                      setEditData({ ...editData, phone: e.target.value })
+                    }
+                    placeholder="Phone"
+                  />
+                  <input
+                    className="w-full p-2 border rounded mb-2"
+                    value={editData.address}
+                    onChange={(e) =>
+                      setEditData({ ...editData, address: e.target.value })
+                    }
+                    placeholder="Address"
+                  />
+                </>
+              ) : (
+                <div className="space-y-3 border-t border-gray-100 pt-4">
+                  <div className="flex">
+                    <span className="font-medium text-gray-600 w-1/3">Email:</span>
+                    <span className="text-gray-800">{userDetails.email}</span>
+                  </div>
+                  <div className="flex">
+                    <span className="font-medium text-gray-600 w-1/3">Phone:</span>
+                    <span className="text-gray-800">{userDetails.phone}</span>
+                  </div>
+                  <div className="flex">
+                    <span className="font-medium text-gray-600 w-1/3">Address:</span>
+                    <span className="text-gray-800">{userDetails.address}</span>
+                  </div>
+                  <div className="flex">
+                    <span className="font-medium text-gray-600 w-1/3">Meter #:</span>
+                    <span className="text-gray-800">{userDetails.meterNumber}</span>
+                  </div>
+                </div>
+              )}
+            </CardWrapper>
 
             {/* Pending Bills Card */}
             <CardWrapper header={<h2 className="text-xl font-bold">Pending Bills</h2>}>
