@@ -62,4 +62,9 @@ const payBill = async(req,res)=>{
   });
 }
 
+const receipt = async(req,res)=>{
+  const {name,email,phone,address} = req.body;
+  
+}
+
 module.exports = { recordPayment, unpaidBills, payBill};

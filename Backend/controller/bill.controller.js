@@ -43,4 +43,36 @@ const fetchBillDetails = async (req,res) => {
     }
 }  
 
-module.exports = {getPendingBills ,getAllBills,fetchBillDetails};
+const receipt = async (req, res) => {
+    const { receipt_number, account_number, user_id, payment_method, amount, bill_id } = req.body;
+    
+    try {
+        console.log(req.body);
+      const [result] = await db.promise().query(
+        `INSERT INTO receipts (receipt_number, account_number, user_id, payment_method, amount, bill_id) 
+         VALUES (?, ?, ?, ?, ?, ?)`,
+        [receipt_number, account_number, user_id, payment_method, amount, bill_id]
+      );
+  
+      const receiptId = result.insertId;
+  
+      await db.promise().query(
+        `UPDATE Bills SET status = 'paid' WHERE bill_id = ?`,
+        [bill_id]
+      );
+  
+      const [rows] = await db.promise().query(
+        `SELECT * FROM receipts WHERE id = ?`,
+        [receiptId]
+      );
+      console.log("Updating bill with ID:", bill_id);
+      res.status(201).json(rows[0]);
+    } catch (error) {
+      console.error("Failed to save receipt:", error);
+      res.status(500).json({ error: 'Failed to save receipt' });
+    }
+  };
+  
+  
+  
+module.exports = {getPendingBills ,getAllBills,fetchBillDetails, receipt};

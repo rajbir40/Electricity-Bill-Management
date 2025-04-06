@@ -11,6 +11,7 @@ import FindUser from './components/FindUser';
 import FindMeter from './components/FindMeter';
 import GenerateBill from './components/GenerateBill';
 import Bill from './components/Bill';
+import Receipt from './components/Receipt';
 import BillPage from './components/BillPage';
 import {BrowserRouter, Routes, Route , Navigate} from 'react-router-dom';
 import { authStore } from './store/auth.store';
@@ -40,7 +41,7 @@ function App() {
           <Route path='/forgot-password' element={<ForgotPassword/>}/>
           <Route path='/about' element={<About/>}/>
           <Route path='/admin/bill-page' element={<BillPage/>}/>
-
+          <Route path='/receipt' element={<Receipt/>}/>
           {/* Authenticated Routes */}
           <Route path="/" element={authUser ? <Home/> : <Navigate to="/" />} />
           <Route path='/home' element={authUser ? <Home/> : <Navigate to="/" />}/>

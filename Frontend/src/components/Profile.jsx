@@ -4,10 +4,33 @@ import profile from '../assets/profile.jpg';
 import axios from 'axios';
 const host = import.meta.env.VITE_BACKEND_HOST;
 import { authStore } from '../store/auth.store';
+import { useNavigate } from 'react-router-dom';
 
 export default function Profile() {
   const { authUser } = authStore();
-
+  const navigate = useNavigate();
+  const [dueBills, setDueBills] = useState([]);
+  
+    useEffect(() => {
+      fetchDueBills();
+    }, []);
+    const fetchDueBills = async () => {
+      try {
+        const user_id = authUser.user_id;
+        const response = await axios.get(`${host}/api/bill/due-bills/${user_id}`);
+        setDueBills(response.data);
+      } catch (error) {
+        console.error("Error fetching due bills:", error);
+      }
+    };
+    const handlePayBill = async (billId) => {
+      try {
+        navigate('/bill', { state: { billId } });
+      } catch (error) {
+        console.error("Payment failed:", error);
+        alert("Please try again later.");
+      }
+    };
   const [userDetails, setUserDetails] = useState({
     fullName: "",
     email: "",
@@ -36,9 +59,9 @@ export default function Profile() {
 
   const handleUpdate = async () => {
     try {
-      // Merge the editData into userDetails for update
+      console.log(authUser);
       const updatedDetails = { ...userDetails, ...editData };
-      await axios.put(`${host}/api/user/update/${authUser[0].user_id}`, updatedDetails);
+      await axios.put(`${host}/api/user/update/${authUser.user_id}`, updatedDetails);
       alert("Profile updated successfully");
       setUserDetails(updatedDetails);
     } catch (error) {
@@ -70,13 +93,6 @@ export default function Profile() {
     { id: 3, month: "December 2024", amount: 145.20, paidDate: "January 8, 2025", billNumber: "INV-2412-87654" }
   ];
 
-  const [pendingBills, setPendingBills] = useState([
-    { id: 1, month: "March 2025", amount: 127.85, dueDate: "April 15, 2025", billNumber: "INV-2503-87654" }
-  ]);
-
-  const addPendingBill = (newBill) => {
-    setPendingBills([...pendingBills, newBill]);
-  };
 
   const [notifications, setNotifications] = useState([]);
 
@@ -206,30 +222,43 @@ export default function Profile() {
 
             {/* Pending Bills Card */}
             <CardWrapper header={<h2 className="text-xl font-bold">Pending Bills</h2>}>
-              {pendingBills.length > 0 ? (
-                <div className="space-y-4">
-                  {pendingBills.map(bill => (
-                    <div key={bill.id} className="border border-gray-200 rounded-md p-4 bg-white">
-                      <div className="flex justify-between mb-2">
-                        <h3 className="font-semibold text-gray-800">{bill.month}</h3>
-                        <span className="font-bold text-blue-600">${bill.amount.toFixed(2)}</span>
-                      </div>
-                      <div className="text-sm text-gray-500 mb-3">
-                        <p className='text-red-600'>Due Date: {bill.dueDate}</p>
-                        <p>Bill #: {bill.billNumber}</p>
-                      </div>
-                      <div className="flex space-x-2">
-                        <button className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors flex-grow">
-                          Pay Now
-                        </button>
-                        <button className="border border-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-50 transition-colors bg-green-500">
-                          View Bill
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
+            {dueBills.length > 0 ? (
+  dueBills.map((bill) => {
+    const formattedMonth = new Date(bill.billing_month).toLocaleString('default', {
+      month: 'long',
+      year: 'numeric',
+    });
+    const formattedDueDate = new Date(bill.due_date).toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+    return (
+      <div key={bill.bill_id} className="border border-gray-200 rounded-md p-4 bg-white">
+        <div className="flex justify-between mb-2">
+          <h3 className="font-semibold text-gray-800">{formattedMonth}</h3>
+          <span className="font-bold text-blue-600">₹{parseFloat(bill.total_amount).toFixed(2)}</span>
+        </div>
+        <div className="text-sm text-gray-500 mb-3">
+          <p className="text-red-600">Due Date: {formattedDueDate}</p>
+          <p>Units consumed: {bill.units_consumed}</p>
+        </div>
+        <div className="flex space-x-2">
+          <button
+            className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors flex-grow"
+            onClick={() => handlePayBill(bill.bill_id)}
+          >
+            Pay Now
+          </button>
+          <button className="border border-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-50 transition-colors bg-green-500">
+            View Bill
+          </button>
+        </div>
+      </div>
+    );
+  })
+) 
+ : (
                 <div className="text-center py-10">
                   <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
