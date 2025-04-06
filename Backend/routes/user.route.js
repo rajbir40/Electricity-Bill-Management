@@ -5,6 +5,6 @@ const { getAllUsers  , getBillingHistory , getUser} = require('../controller/use
 
 router.get('/all-user', getAllUsers);
 router.get('/billing-history', getBillingHistory);
-router.get('/get-user', getUser);
+router.get('/get/:user_id', getUser);
 
 module.exports = router;

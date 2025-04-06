@@ -1,5 +1,6 @@
 const db = require('../lib/db');
 const nodemailer = require('nodemailer');
+const socketService = require('../service/socketservice');
 
 const  getUser = async (req,res) => {
     const meterid = req.query.meterid;
@@ -20,58 +21,63 @@ const  getUser = async (req,res) => {
     }
 }
 
+ // <-- Step 1
+
 const createNewBill = async (req, res) => {
-    try {
-      // Extract data from the request body
-      const { meter_id, units_consumed, total_amount, billing_month, due_date } = req.body;
-  
-      // Validate that all required fields are provided
-      if (!meter_id || units_consumed === undefined || !total_amount || !billing_month || !due_date) {
-        return res.status(400).json({ error: "Missing required fields" });
-      }
-  
-      // 1. Retrieve the user ID for the given meter_id from the Meters table
-      const getUserQuery = "SELECT user_id FROM Meters WHERE meter_id = ?;";
-      db.query(getUserQuery, [meter_id], (err, userResults) => {
-        if (err) {
-          console.error("Database error:", err);
-          return res.status(500).json({ error: "Database error" });
-        }
-        
-        if (userResults.length === 0) {
-          return res.status(404).json({ error: "Meter not found" });
-        }
-        
-        const user_id = userResults[0].user_id;
-  
-        // 2. Insert a new bill into the Bills table
-        const insertBillQuery = `
-          INSERT INTO Bills (user_id, meter_id, billing_month, units_consumed, total_amount, due_date)
-          VALUES (?, ?, ?, ?, ?, ?);
-        `;
-        
-        db.query(
-          insertBillQuery,
-          [user_id, meter_id, billing_month, units_consumed, total_amount, due_date],
-          (err, insertResult) => {
-            if (err) {
-              console.error("Database error:", err);
-              return res.status(500).json({ error: "Database error" });
-            }
-            
-            // Bill created successfully; respond with the new bill's ID
-            return res.status(201).json({ 
-              message: "Bill generated successfully", 
-              billId: insertResult.insertId 
-            });
-          }
-        );
-      });
-    } catch (error) {
-      console.error("Error generating bill:", error);
-      return res.status(500).json({ error: "Internal server error" });
+  try {
+    const { meter_id, units_consumed, total_amount, billing_month, due_date } = req.body;
+
+    if (!meter_id || units_consumed === undefined || !total_amount || !billing_month || !due_date) {
+      return res.status(400).json({ error: "Missing required fields" });
     }
-  };
+
+    const getUserQuery = "SELECT user_id FROM Meters WHERE meter_id = ?;";
+    db.query(getUserQuery, [meter_id], (err, userResults) => {
+      if (err) {
+        console.error("Database error:", err);
+        return res.status(500).json({ error: "Database error" });
+      }
+
+      if (userResults.length === 0) {
+        return res.status(404).json({ error: "Meter not found" });
+      }
+
+      const user_id = userResults[0].user_id;
+
+      const insertBillQuery = `
+        INSERT INTO Bills (user_id, meter_id, billing_month, units_consumed, total_amount, due_date)
+        VALUES (?, ?, ?, ?, ?, ?);
+      `;
+
+      db.query(
+        insertBillQuery,
+        [user_id, meter_id, billing_month, units_consumed, total_amount, due_date],
+        (err, insertResult) => {
+          if (err) {
+            console.error("Database error:", err);
+            return res.status(500).json({ error: "Database error" });
+          }
+
+          // 🔔 Step 2: Send real-time notification to the user
+          socketService.notifyNewBill(user_id.toString(), {
+            amount: total_amount,
+            dueDate: due_date,
+            billingMonth: billing_month
+          });
+
+          return res.status(201).json({
+            message: "Bill generated successfully",
+            billId: insertResult.insertId
+          });
+        }
+      );
+    });
+  } catch (error) {
+    console.error("Error generating bill:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 
   const sendReminder = async (req, res) => {
     try {
@@ -117,6 +123,23 @@ const createNewBill = async (req, res) => {
 
         return res.status(200).json({ message: "Emails sent successfully" });
 
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+};
+
+const getMeterDetails = async (req, res) => {
+    try {
+        const meter_id = req.params.meter_id;
+        const sql = "SELECT * FROM Meters WHERE meter_id = ?;";
+        db.query(sql, meter_id, (err, results) => {
+            if (err) {
+                console.error("Database error:", err);
+                return res.status(500).json({ error: "Database error" });
+            }
+            return res.json(results);
+        });
     } catch (error) {
         console.error("Error fetching data:", error);
         return res.status(500).json({ error: "Internal server error" });
