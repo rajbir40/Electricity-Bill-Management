@@ -3,7 +3,6 @@ import signupBg from '../assets/signupBg.jpg';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 const host = import.meta.env.VITE_BACKEND_HOST
-
 const LoginPage = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -44,7 +43,7 @@ const LoginPage = () => {
       const response = await axios.post(`${host}/api/auth/login`, formData);
       if(response.status === 200){
         alert('Login in successful! Redirecting to home page...');
-        // console.log(response.data.token);
+        console.log(response.data.token);
         localStorage.setItem("token",response.data.token);
         navigate('/home');
       }

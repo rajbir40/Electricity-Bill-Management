@@ -18,8 +18,20 @@ const getAllUsers = async (req, res) => {
 
 const getUser = async (req, res) => {
     try {
-        const userid = req.params.user_id; // or req.params.userid if that's how your route is defined
-        const sql = "SELECT * FROM Users WHERE user_id = ?;";
+        const userid = req.params.user_id;
+        const sql = `
+            SELECT 
+                u.user_id,
+                u.fullName,
+                u.email,
+                u.phone,
+                u.role,
+                u.address,
+                m.meter_number AS meterNumber
+            FROM Users u
+            LEFT JOIN Meters m ON u.user_id = m.user_id
+            WHERE u.user_id = ?;
+        `;
         db.query(sql, userid, (err, results) => {
             if (err) {
                 console.error("Database error:", err);
@@ -32,6 +44,7 @@ const getUser = async (req, res) => {
         return res.status(500).json({ error: "Internal server error" });
     }
 };
+
 
 
 
@@ -53,5 +66,21 @@ const getBillingHistory = async (req , res)=> {
     }
 };
 
-
-module.exports = { getAllUsers  , getBillingHistory , getUser};
+const updateUser = async (req, res) => {
+    const user_id = req.params.user_id;
+    const { fullName, email, phone, address } = req.body;
+    try {
+      await db.promise().query(
+        `UPDATE Users 
+         SET fullName = ?, email = ?, phone = ?, address = ? 
+         WHERE user_id = ?`,
+        [fullName, email, phone, address, user_id]
+      );
+      res.json({ success: true, message: "User updated successfully" });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ success: false, message: "Update failed" });
+    }
+  };
+  
+module.exports = { getAllUsers  , getBillingHistory , getUser, updateUser};

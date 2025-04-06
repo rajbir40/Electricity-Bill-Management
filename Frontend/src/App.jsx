@@ -22,7 +22,6 @@ function App() {
   useEffect(() => {
     checkAuth();
   },[checkAuth])
-  // console.log(authUser);
 
   if(isCheckingAuth && !authUser){
     return (
@@ -41,18 +40,17 @@ function App() {
           <Route path='/forgot-password' element={<ForgotPassword/>}/>
           <Route path='/about' element={<About/>}/>
           <Route path='/admin/bill-page' element={<BillPage/>}/>
-          {/* <Route path='/home' element={<Home/>}/> */}
 
           {/* Authenticated Routes */}
-          <Route path="/" element={authUser ? <Home/> : <Navigate to="/login" />} />
-          <Route path='/home' element={authUser ? <Home/> : <Navigate to="/login" />}/>
-          <Route path='/profile' element={authUser ? <Profile/> : <Navigate to="/login" />}/>
-          <Route path='/admin/home' element={authUser ? <AdminHome/> : <Navigate to="/login" />}/>
-          <Route path='/admin/profile' element={authUser ? <AdminProfile/> : <Navigate to="/login" />}/>
-          <Route path='/admin/find-user' element={authUser ? <FindUser/> : <Navigate to="/login" />}/>
-          <Route path='/admin/find-meter' element={authUser ? <FindMeter/>: <Navigate to="/login" />}/>
-          <Route path='/admin/find-meter' element={authUser ? <FindMeter/> : <Navigate to="/login" />}/>
-          <Route path='/admin/generate-bill' element={authUser ? <GenerateBill/> : <Navigate to="/login" />}/>
+          <Route path="/" element={authUser ? <Home/> : <Navigate to="/" />} />
+          <Route path='/home' element={authUser ? <Home/> : <Navigate to="/" />}/>
+          <Route path='/profile' element={authUser ? <Profile/> : <Navigate to="/" />}/>
+          <Route path='/admin/home' element={authUser ? <AdminHome/> : <Navigate to="/" />}/>
+          <Route path='/admin/profile' element={authUser ? <AdminProfile/> : <Navigate to="/" />}/>
+          <Route path='/admin/find-user' element={authUser ? <FindUser/> : <Navigate to="/" />}/>
+          <Route path='/admin/find-meter' element={authUser ? <FindMeter/>: <Navigate to="/" />}/>
+          <Route path='/admin/find-meter' element={authUser ? <FindMeter/> : <Navigate to="/" />}/>
+          <Route path='/admin/generate-bill' element={authUser ? <GenerateBill/> : <Navigate to="/" />}/>
           
           <Route path='/bill' element={<Bill/>}/>
         </Routes>
