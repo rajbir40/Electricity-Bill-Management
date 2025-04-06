@@ -26,7 +26,7 @@ export default function Profile() {
 
   const fetchUserDetails = async () => {
     try {
-      const user_id = authUser[0].user_id;
+      const user_id = authUser.user_id;
       const response = await axios.get(`${host}/api/user/get/${user_id}`);
       setUserDetails(response.data[0]);
     } catch (error) {
@@ -36,7 +36,7 @@ export default function Profile() {
 
   const fetchMeterNumber = async () => {
     try {
-      const user_id = authUser[0].user_id;
+      const user_id = authUser.user_id;
       const response = await axios.get(`${host}/api/user/get/${user_id}`);
       setMeterNumber(response.data[0].meter_number);
     } catch (error) {

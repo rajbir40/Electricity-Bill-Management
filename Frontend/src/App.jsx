@@ -53,8 +53,7 @@ function App() {
           <Route path='/admin/find-meter' element={authUser ? <FindMeter/>: <Navigate to="/login" />}/>
           <Route path='/admin/find-meter' element={authUser ? <FindMeter/> : <Navigate to="/login" />}/>
           <Route path='/admin/generate-bill' element={authUser ? <GenerateBill/> : <Navigate to="/login" />}/>
-          
-          <Route path='/bill' element={<Bill/>}/>
+          <Route path='/bill' element={authUser ? <Bill/> : <Navigate to="/login" />}/>
         </Routes>
       </BrowserRouter>
     </>

@@ -30,4 +30,17 @@ const getPendingBills = async (req,res) => {
     }
 }
 
-module.exports = {getPendingBills ,getAllBills};
+const fetchBillDetails = async (req,res) => {
+    try{
+        const bill_id = req.params.bill_id;
+        const query = `SELECT * FROM Bills WHERE bill_id = ?`;
+        const bill = await db.promise().query(query,[bill_id]);
+        res.status(200).json(bill[0]);
+    }
+    catch(error){
+        console.log(error);
+        res.status(500).json({error:"Internal Server Error"});
+    }
+}  
+
+module.exports = {getPendingBills ,getAllBills,fetchBillDetails};
