@@ -13,7 +13,7 @@ export default function FindUser() {
     setUser(null);
     setBillingHistory([]);
     try {
-      const response = await fetch(`http://localhost:8080/api/user/get-user?userid=${userId}`);
+      const response = await fetch(`http://localhost:8080/api/user/get/${userId}`);
       const data = await response.json();
       if (data.error) {
         setError(data.error);
