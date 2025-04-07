@@ -54,6 +54,7 @@ export default function Bill() {
       navigate('/receipt', {
         state: {
           paymentDetails: {
+            user_id: user.user_id,
             name: user.fullName,
             email: user.email,
             amount: bill.total_amount,

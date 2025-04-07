@@ -19,12 +19,12 @@ export default function Receipt() {
   useEffect(() => {
     const generateReceipt = async () => {
       try {
-        const { fullName, email } = authUser;
+        const { fullName, email, user_id } = authUser;
         const { accountNumber, paymentMethod, amount, bill_id } = paymentDetails;
         const response = await axios.post(`${host}/api/bill/receipt`, {
           receipt_number: `REC-${Date.now().toString().slice(-6)}`,
-          account_number: accountNumber, // from paymentDetails
-          user_id: authUser.id,
+          account_number: accountNumber, 
+          user_id: user_id,
           customer_name: fullName,
           email,
           payment_method: paymentMethod,
@@ -189,7 +189,7 @@ export default function Receipt() {
                     {formatCurrency(receipt?.amount || receipt?.total_amount || 0)}
                   </td>
                 </tr>
-                {receipt?.charges?.map((charge, index) => (
+                {/* {receipt?.charges?.map((charge, index) => (
                   <tr key={index}>
                     <td className="px-6 py-4 text-sm text-gray-500">{charge.description}</td>
                     <td className="px-6 py-4 text-sm text-gray-500"></td>
@@ -197,7 +197,7 @@ export default function Receipt() {
                       {formatCurrency(charge.amount)}
                     </td>
                   </tr>
-                ))}
+                ))} */}
               </tbody>
               <tfoot>
                 <tr className="bg-gray-50">

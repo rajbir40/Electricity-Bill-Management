@@ -45,9 +45,14 @@ const fetchBillDetails = async (req,res) => {
 
 const receipt = async (req, res) => {
     const { receipt_number, account_number, user_id, payment_method, amount, bill_id } = req.body;
-    
+    if (!bill_id) return res.status(400).json({ error: 'Missing bill_id' });
     try {
         console.log(req.body);
+        const [existing] = await db.promise().query(`SELECT * FROM receipts WHERE bill_id = ?`, [bill_id]);
+
+        if (existing.length > 0) {
+          return res.json(existing[0]);
+        }
       const [result] = await db.promise().query(
         `INSERT INTO receipts (receipt_number, account_number, user_id, payment_method, amount, bill_id) 
          VALUES (?, ?, ?, ?, ?, ?)`,
@@ -73,6 +78,15 @@ const receipt = async (req, res) => {
     }
   };
   
+  const getReceiptsByUser = async (req, res) => {
+    const userId = req.params.user_id;
+    try {
+      const receipts = await db.promise().query('SELECT * FROM receipts WHERE user_id = ?', [userId]);
+      res.status(200).json(receipts[0]);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Failed to fetch receipts' });
+    }
+  };
   
-  
-module.exports = {getPendingBills ,getAllBills,fetchBillDetails, receipt};
+module.exports = {getPendingBills ,getAllBills,fetchBillDetails, receipt, getReceiptsByUser};
