@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import Navbar from './Navbar';
-
+import { useNavigate } from 'react-router-dom';
 export default function FindUser() {
   const [userId, setUserId] = useState('');
   const [user, setUser] = useState(null);
   const [billingHistory, setBillingHistory] = useState([]);
   const [error, setError] = useState('');
-
+  const navigate = useNavigate();
   const handleUserSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -80,12 +80,13 @@ export default function FindUser() {
             <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">
               User Information
             </h2>
-            <p><strong>ID:</strong> {user.id}</p>
+            <p><strong>ID:</strong> {user.user_id}</p>
             <p><strong>Full Name:</strong> {user.fullName}</p>
             <p><strong>Email:</strong> {user.email}</p>
-            {/* Add any other user fields as necessary */}
+            <p><strong>Phone:</strong> {user.phone}</p>
+            <p><strong>Address:</strong> {user.address}</p>
             <button
-              onClick={handleBillingHistory}
+              onClick={()=>{navigate('/billing-history')}}
               className="w-full mt-4 py-2 px-4 bg-green-600 text-white rounded-md shadow hover:bg-blue-700 transition-colors"
             >
               See Billing History

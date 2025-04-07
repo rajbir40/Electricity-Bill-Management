@@ -4,7 +4,7 @@ const socketService = require('../service/socketservice');
 
 const  getUser = async (req,res) => {
     const meterid = req.query.meterid;
-    const sql = "SELECT U.user_id, U.fullName, U.email, U.phone, M.meter_number, M.meter_type FROM Users U JOIN Meters M ON U.user_id = M.user_id WHERE M.meter_id = ?;"
+    const sql = "SELECT U.user_id, U.fullName, U.email, U.phone, M.meter_id, M.meter_type FROM Users U JOIN Meters M ON U.user_id = M.user_id WHERE M.meter_id = ?;"
 
     try{
         db.query(sql, meterid , (err, results) => {
@@ -58,7 +58,7 @@ const createNewBill = async (req, res) => {
             return res.status(500).json({ error: "Database error" });
           }
 
-          // 🔔 Step 2: Send real-time notification to the user
+          
           socketService.notifyNewBill(user_id.toString(), {
             amount: total_amount,
             dueDate: due_date,

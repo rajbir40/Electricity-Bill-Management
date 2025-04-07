@@ -48,7 +48,19 @@ export default function Profile() {
     address: ""
   });
   const [editMode, setEditMode] = useState(false);
-
+  const handleUpdate = async () => {
+    try {
+      const response = await axios.put(`${host}/api/user/update/${authUser.user_id}`, editData);
+      if (response.status === 200) {
+        setUserDetails({ ...userDetails, ...editData });
+        setEditMode(false);
+      }
+    } catch (error) {
+      console.error("Error updating user data:", error);
+      alert("Failed to update user details.");
+    }
+  };
+  
   const fetchUserDetails = async () => {
     try {
       const user_id = authUser.user_id;
@@ -286,7 +298,7 @@ export default function Profile() {
             >
               <div className="space-y-4">
                 {paidBills.length > 0 ? (
-                  paidBills.map(bill => (
+                  paidBills.slice(0, 2).map(bill => (
                     <div key={bill.receipt_number} className="border border-gray-200 rounded-md p-4 bg-white">
                       
                       <div className="flex justify-between mb-2">

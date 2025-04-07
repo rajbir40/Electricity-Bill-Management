@@ -9,17 +9,17 @@ const billRoutes = require('./routes/bill.route.js');
 const dotenv = require('dotenv');
 // const express = require('express');
 const http = require('http');
-const socketIo = require('socket.io');
+const {Server} = require('socket.io');
 
 const app = express();
-const server = http.createServer(app);
-const io = socketIo(server);
+const io = new Server(http);
 const bcrypt = require('bcrypt');
 
 app.use(express.json());
 app.use(cors({origin: "http://localhost:5173",credentials: true}));
 require("dotenv").config();
-
+const socketService = require('./service/socketservice');
+socketService.init(io);
 io.on('connection', (socket) => {
     console.log('New client connected');
   
