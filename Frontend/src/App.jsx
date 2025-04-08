@@ -40,9 +40,9 @@ function App() {
           <Route path='/forgot-password' element={<ForgotPassword/>}/>
           <Route path='/about' element={<About/>}/>
           <Route path='/admin/bill-page' element={<BillPage/>}/>
+          <Route path="/" element={<SignUpPage/>} />
 
           {/* Authenticated Routes */}
-          <Route path="/" element={authUser ? <Home/> : <Navigate to="/" />} />
           <Route path='/home' element={authUser ? <Home/> : <Navigate to="/" />}/>
           <Route path='/profile' element={authUser ? <Profile/> : <Navigate to="/" />}/>
           <Route path='/admin/home' element={authUser ? <AdminHome/> : <Navigate to="/" />}/>

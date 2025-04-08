@@ -38,20 +38,35 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = validate();
-    
+  
     if (Object.keys(newErrors).length === 0) {
-      const response = await axios.post(`${host}/api/auth/login`, formData);
-      if(response.status === 200){
-        alert('Login in successful! Redirecting to home page...');
-        console.log(response.data.token);
-        localStorage.setItem("token",response.data.token);
-        navigate('/home');
+      try {
+        const response = await axios.post(`${host}/api/auth/login`, formData);
+        if (response.status === 200) {
+          const { token, user } = response.data;
+          alert('Login successful! Redirecting...');
+          console.log('Token:', token);
+          console.log('User:', user);
+  
+          localStorage.setItem("token", token);
+          localStorage.setItem("role", user.role); // optional, if needed later
+  
+          if (user.role === 'admin') {
+            navigate('/admin/home');
+          } else {
+            navigate('/home');
+          }
+        }
+      } catch (error) {
+        alert('Login failed! Invalid credentials or server error.');
+        console.error('Login error:', error);
       }
     } else {
       alert('Login failed! Please check the form.');
       setErrors(newErrors);
     }
   };
+  
 
   return (
     <div

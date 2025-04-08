@@ -65,7 +65,16 @@ const login = async (req, res) => {
   
               // Success response
             //   console.log(token);
-              res.status(200).json({ message: "Login successful", token: token });
+            res.status(200).json({ 
+            message: "Login successful", 
+            token: token, 
+            user: {
+                id: user.user_id,
+                email: user.email,
+                role: user.role // make sure 'role' is a column in your 'users' table
+            } 
+            });
+              
           });
       } catch (error) {
           console.error("Internal server error:", error);
