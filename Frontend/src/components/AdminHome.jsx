@@ -39,10 +39,10 @@ export default function AdminHome() {
             <img src={meter} alt="" />
             <Link to="/admin/find-meter" className="block text-center">
               <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                Bill History
+                Meter Profile
               </h2>
               <button className="w-full py-2 px-4 bg-green-600 text-white rounded-md shadow hover:bg-blue-700 transition-colors">
-                View bill history
+                View meter owner
               </button>
             </Link>
           </div>

@@ -4,9 +4,35 @@ import profile from '../assets/profile.jpg';
 import axios from 'axios';
 const host = import.meta.env.VITE_BACKEND_HOST;
 import { authStore } from '../store/auth.store';
+import { useNavigate } from 'react-router-dom';
 
 export default function Profile() {
   const { authUser } = authStore();
+  const navigate = useNavigate();
+  
+  const [dueBills, setDueBills] = useState([]);
+  const fetchDueBills = async () => {
+    try {
+      const user_id = authUser.user_id;
+      const response = await axios.get(`${host}/api/bill/due-bills/${user_id}`);
+      setDueBills(response.data);
+    } catch (error) {
+      console.error("Error fetching due bills:", error);
+    }
+  };
+  useEffect(() => {
+    fetchDueBills();
+  }, []);
+
+  const handlePayBill = async (billId) => {
+    try {
+      navigate('/bill', { state: { billId } });
+    } catch (error) {
+      console.error("Payment failed:", error);
+      alert("Please try again later.");
+    }
+  };
+  
 
   const [userDetails, setUserDetails] = useState({
     fullName: "",
@@ -15,7 +41,6 @@ export default function Profile() {
     address: "",
     meterNumber: ""
   });
-  // Local state for edit mode values
   const [editData, setEditData] = useState({
     fullName: "",
     email: "",
@@ -23,7 +48,19 @@ export default function Profile() {
     address: ""
   });
   const [editMode, setEditMode] = useState(false);
-
+  const handleUpdate = async () => {
+    try {
+      const response = await axios.put(`${host}/api/user/update/${authUser.user_id}`, editData);
+      if (response.status === 200) {
+        setUserDetails({ ...userDetails, ...editData });
+        setEditMode(false);
+      }
+    } catch (error) {
+      console.error("Error updating user data:", error);
+      alert("Failed to update user details.");
+    }
+  };
+  
   const fetchUserDetails = async () => {
     try {
       const user_id = authUser.user_id;
@@ -33,26 +70,9 @@ export default function Profile() {
       console.error('Error fetching user details:', error);
     }
   };
-
-  const handleUpdate = async () => {
-    try {
-      // Merge the editData into userDetails for update
-      const updatedDetails = { ...userDetails, ...editData };
-      await axios.put(`${host}/api/user/update/${authUser[0].user_id}`, updatedDetails);
-      alert("Profile updated successfully");
-      setUserDetails(updatedDetails);
-    } catch (error) {
-      console.error("Update failed", error);
-      alert("Update failed");
-    }
-  };
-
-  // When userDetails are fetched, update editData if not in editMode
   useEffect(() => {
     fetchUserDetails();
   }, []);
-
-  // When switching to edit mode, initialize editData with current userDetails
   useEffect(() => {
     if (editMode) {
       setEditData({
@@ -64,27 +84,26 @@ export default function Profile() {
     }
   }, [editMode, userDetails]);
 
-  const paidBills = [
-    { id: 1, month: "February 2025", amount: 119.40, paidDate: "March 10, 2025", billNumber: "INV-2502-87654" },
-    { id: 2, month: "January 2025", amount: 132.75, paidDate: "February 12, 2025", billNumber: "INV-2501-87654" },
-    { id: 3, month: "December 2024", amount: 145.20, paidDate: "January 8, 2025", billNumber: "INV-2412-87654" }
-  ];
-
-  const [pendingBills, setPendingBills] = useState([
-    { id: 1, month: "March 2025", amount: 127.85, dueDate: "April 15, 2025", billNumber: "INV-2503-87654" }
-  ]);
-
-  const addPendingBill = (newBill) => {
-    setPendingBills([...pendingBills, newBill]);
+  const [paidBills, setPaidBills] = useState([]);
+  const fetchPaidBills = async () => {
+    try {
+      const response = await axios.get(`${host}/api/bill/receipt/${authUser.user_id}`);
+      setPaidBills(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error fetching payment history:", error);
+    }
   };
+  useEffect(() => {
+    fetchPaidBills();
+  }, []);
 
   const [notifications, setNotifications] = useState([]);
-
   const dismissNotification = (id) => {
     setNotifications(notifications.filter(notification => notification.id !== id));
   };
 
-  // CardWrapper component with hover effect removed.
+  // CardWrapper component remains unchanged
   const CardWrapper = ({ header, children }) => (
     <div className="relative rounded-lg shadow-xl overflow-hidden bg-white/50 backdrop-blur-md mt-4">
       {header && (
@@ -98,6 +117,22 @@ export default function Profile() {
     </div>
   );
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString || Date.now());
+    return new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(date);
+  };
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD'
+    }).format(amount);
+  };
 
   return (
     <div className="min-h-screen relative">
@@ -110,14 +145,12 @@ export default function Profile() {
           filter: 'brightness(0.7)',
         }}
       />
-
       <div className="relative z-10">
         <Navbar />
-
         <div className="container mx-auto py-8 px-4">
           <h1 className="text-3xl font-bold text-[#d0d0ab] mb-6 text-center">My Profile</h1>
-
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Account Information Card */}
             <CardWrapper
               header={
                 <div className="flex items-center justify-between">
@@ -206,20 +239,32 @@ export default function Profile() {
 
             {/* Pending Bills Card */}
             <CardWrapper header={<h2 className="text-xl font-bold">Pending Bills</h2>}>
-              {pendingBills.length > 0 ? (
-                <div className="space-y-4">
-                  {pendingBills.map(bill => (
-                    <div key={bill.id} className="border border-gray-200 rounded-md p-4 bg-white">
+              {dueBills.length > 0 ? (
+                dueBills.map((bill) => {
+                  const formattedMonth = new Date(bill.billing_month).toLocaleString('default', {
+                    month: 'long',
+                    year: 'numeric',
+                  });
+                  const formattedDueDate = new Date(bill.due_date).toLocaleDateString(undefined, {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  });
+                  return (
+                    <div key={bill.bill_id} className="border border-gray-200 rounded-md p-4 bg-white">
                       <div className="flex justify-between mb-2">
-                        <h3 className="font-semibold text-gray-800">{bill.month}</h3>
-                        <span className="font-bold text-blue-600">${bill.amount.toFixed(2)}</span>
+                        <h3 className="font-semibold text-gray-800">{formattedMonth}</h3>
+                        <span className="font-bold text-blue-600">₹{parseFloat(bill.total_amount).toFixed(2)}</span>
                       </div>
                       <div className="text-sm text-gray-500 mb-3">
-                        <p className='text-red-600'>Due Date: {bill.dueDate}</p>
-                        <p>Bill #: {bill.billNumber}</p>
+                        <p className="text-red-600">Due Date: {formattedDueDate}</p>
+                        <p>Units consumed: {bill.units_consumed}</p>
                       </div>
                       <div className="flex space-x-2">
-                        <button className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors flex-grow">
+                        <button
+                          className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors flex-grow"
+                          onClick={() => handlePayBill(bill.bill_id)}
+                        >
                           Pay Now
                         </button>
                         <button className="border border-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-50 transition-colors bg-green-500">
@@ -227,17 +272,16 @@ export default function Profile() {
                         </button>
                       </div>
                     </div>
-                  ))}
-                </div>
+                  );
+                })
               ) : (
                 <div className="text-center py-10">
                   <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <p className="text-gray-500">You have no pending bills!</p>
+                  <p className="text-black">You have no pending bills!</p>
                 </div>
               )}
-
               <div className="mt-4 text-sm text-gray-500">
                 <p className='text-blue-700'>Next bill generation date: April 30, 2025</p>
               </div>
@@ -248,27 +292,55 @@ export default function Profile() {
               header={
                 <div className="flex items-center justify-between">
                   <h2 className="text-xl font-bold">Payment History</h2>
-                  <button className="text-sm font-medium">View All</button>
+                  <button className="text-sm font-medium" onClick={()=>{navigate('/payment-history')}}>View All</button>
                 </div>
               }
             >
               <div className="space-y-4">
-                {paidBills.map(bill => (
-                  <div key={bill.id} className="border border-gray-200 rounded-md p-4 bg-white">
-                    <div className="flex justify-between mb-2">
-                      <h3 className="font-semibold text-gray-800">{bill.month}</h3>
-                      <span className="font-bold text-green-600">${bill.amount.toFixed(2)}</span>
+                {paidBills.length > 0 ? (
+                  paidBills.slice(0, 2).map(bill => (
+                    <div key={bill.receipt_number} className="border border-gray-200 rounded-md p-4 bg-white">
+                      
+                      <div className="flex justify-between mb-2">
+                        <h3 className="font-semibold text-gray-800">
+                          {formatDate(bill.payment_date)}
+                        </h3>
+                        <span className="font-bold text-green-600">
+                          {formatCurrency(bill.amount)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-500">
+                          Account: {bill.account_number}
+                        </span>
+                        <button className="text-blue-600 hover:text-blue-800 font-medium"
+                        onClick={() =>
+                          navigate('/receipt', {
+                            state: {
+                              receiptId: bill.receipt_number,
+                              paymentDetails: {
+                                bill_id: bill.bill_id, 
+                                amount: bill.amount,
+                                accountNumber: bill.account_number,
+                                paymentMethod: bill.payment_method, 
+                              }
+                            }
+                          })
+                        }>
+                          Receipt
+                        </button>
+                      </div>
                     </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">Paid on: {bill.paidDate}</span>
-                      <button className="text-blue-600 hover:text-blue-800 font-medium">
-                        Receipt
-                      </button>
-                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-10">
+                    <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p className="text-black">No payment history available!</p>
                   </div>
-                ))}
+                )}
               </div>
-
               <div className="mt-6 border-t border-gray-100 pt-4">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-900">Last 3 months average:</span>
@@ -280,66 +352,68 @@ export default function Profile() {
                 </div>
               </div>
             </CardWrapper>
-          </div>
-
-          {/* Notifications Section */}
-          <CardWrapper header={<h2 className="text-xl font-bold">Notifications</h2>}>
-            {notifications.length > 0 ? (
-              <div className="space-y-4">
-                {notifications.map(notification => (
-                  <div key={notification.id} className="border border-gray-200 rounded-md p-4 bg-white flex justify-between items-center">
-                    <div>
-                      <p className="text-gray-800">{notification.message}</p>
-                      <p className="text-sm text-gray-500 mt-1">Date: {notification.date}</p>
-                    </div>
-                    <button 
-                      className="ml-4 text-red-600 hover:text-red-800 text-sm"
-                      onClick={() => dismissNotification(notification.id)}
-                    >
-                      Dismiss
-                    </button>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-10">
-                <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <p className="text-black">No notifications at the moment!</p>
-              </div>
-            )}
-          </CardWrapper>
-
-          {/* Usage Overview Card */}
-          <CardWrapper
-            header={
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold text-center">Usage Overview</h2>
-                <button className="text-sm font-medium">
-                  View Detailed Analytics
-                </button>
-              </div>
-            }
-          >
-            <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="border border-gray-200 rounded-md p-4 text-center bg-white">
-                <p className="text-gray-500 text-sm">Current Month</p>
-                <p className="text-2xl font-bold text-gray-800">487 kWh</p>
-                <p className="text-xs text-red-600">↑ 5% from last month</p>
-              </div>
-              <div className="border border-gray-200 rounded-md p-4 text-center bg-white">
-                <p className="text-gray-500 text-sm">Monthly Average</p>
-                <p className="text-2xl font-bold text-gray-800">462 kWh</p>
-                <p className="text-xs text-green-600">↓ 2% from last year</p>
-              </div>
-              <div className="border border-gray-200 rounded-md p-4 text-center bg-white">
-                <p className="text-gray-500 text-sm">Peak Usage</p>
-                <p className="text-2xl font-bold text-gray-800">6 - 8 PM</p>
-                <p className="text-xs text-gray-500">Weekdays</p>
-              </div>
             </div>
-          </CardWrapper>
+            {/* Notifications Section */}
+            <div className='grid grid-cols-1 grid-rows-2 w-full '>
+            <CardWrapper header={<h2 className="text-xl font-bold">Notifications</h2>}>
+              {notifications.length > 0 ? (
+                <div className="space-y-4">
+                  {notifications.map(notification => (
+                    <div key={notification.id} className="border border-gray-200 rounded-md p-4 bg-white flex justify-between items-center">
+                      <div>
+                        <p className="text-gray-800">{notification.message}</p>
+                        <p className="text-sm text-gray-500 mt-1">Date: {notification.date}</p>
+                      </div>
+                      <button 
+                        className="ml-4 text-red-600 hover:text-red-800 text-sm"
+                        onClick={() => dismissNotification(notification.id)}
+                      >
+                        Dismiss
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-10">
+                  <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <p className="text-black">No notifications at the moment!</p>
+                </div>
+              )}
+            </CardWrapper>
+
+            {/* Usage Overview Card */}
+            <CardWrapper
+              header={
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-bold text-center">Usage Overview</h2>
+                  <button className="text-sm font-medium">
+                    View Detailed Analytics
+                  </button>
+                </div>
+              }
+            >
+              <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="border border-gray-200 rounded-md p-4 text-center bg-white">
+                  <p className="text-gray-500 text-sm">Current Month</p>
+                  <p className="text-2xl font-bold text-gray-800">487 kWh</p>
+                  <p className="text-xs text-red-600">↑ 5% from last month</p>
+                </div>
+                <div className="border border-gray-200 rounded-md p-4 text-center bg-white">
+                  <p className="text-gray-500 text-sm">Monthly Average</p>
+                  <p className="text-2xl font-bold text-gray-800">462 kWh</p>
+                  <p className="text-xs text-green-600">↓ 2% from last year</p>
+                </div>
+                <div className="border border-gray-200 rounded-md p-4 text-center bg-white">
+                  <p className="text-gray-500 text-sm">Peak Usage</p>
+                  <p className="text-2xl font-bold text-gray-800">6 - 8 PM</p>
+                  <p className="text-xs text-gray-500">Weekdays</p>
+                </div>
+              </div>
+            </CardWrapper>
+            </div>
+          
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import React, { useState ,useEffect} from 'react';
 import Navbar from './Navbar';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { authStore } from '../store/auth.store';
 const host = import.meta.env.VITE_BACKEND_HOST;
@@ -8,15 +8,16 @@ const host = import.meta.env.VITE_BACKEND_HOST;
 export default function Bill() {
 
   const location = useLocation();
+  const navigate = useNavigate();
   const { billId } = location.state || {};
   const { authUser } = authStore();
 
   const [bill, setBill] = useState(null);
   const [user, setUser] = useState(null);
-
   const fetchBill = async () => {
     try {
       const response = await axios.get(`${host}/api/bill/fetch/${billId}`); 
+      console.log(response.data[0]);
       setBill(response.data[0]);
     } catch (error) {
       console.error("Error fetching bill:", error);
@@ -28,8 +29,6 @@ export default function Bill() {
     setUser(authUser);
   }, []);
 
-  // console.log(bill);
-  // console.log(user);
   
   const [isLoading, setIsLoading] = useState(false);
   const [isPaid, setIsPaid] = useState(false);
@@ -45,13 +44,27 @@ export default function Bill() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     setTimeout(() => {
       setIsLoading(false);
       setIsPaid(true);
+      navigate('/receipt', {
+        state: {
+          paymentDetails: {
+            user_id: user.user_id,
+            name: user.fullName,
+            email: user.email,
+            amount: bill.total_amount,
+            accountNumber: formData.accountNumber,
+            paymentMethod: formData.paymentMethod,
+            date: new Date().toISOString(),
+            bill_id: bill.bill_id,
+          }
+        }
+      });
     }, 1500);
   };
 
@@ -95,6 +108,7 @@ export default function Bill() {
                     id="name"
                     name="name"
                     value={user ? user.fullName : ''}
+                    disabled
                     onChange={handleChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     required
@@ -111,6 +125,7 @@ export default function Bill() {
                     name="amount"
                     value={bill ? bill.total_amount : ''}
                     onChange={handleChange}
+                    disabled
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     required
                     min="1"
@@ -127,6 +142,7 @@ export default function Bill() {
                     id="email"
                     name="email"
                     value={user ? user.email : ''}
+                    disabled
                     onChange={handleChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     required
