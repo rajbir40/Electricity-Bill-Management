@@ -7,7 +7,7 @@ const socketService = require('../service/socketservice');
 // Function to impose fines on overdue bills
  // Step 1: Import socket service
 
-async function imposeFines() {
+ async function imposeFines() {
   const connection = await mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -35,12 +35,16 @@ async function imposeFines() {
 
       console.log(`Imposed fine of ${fineAmount} on bill ID ${bill.bill_id}`);
 
-      // Step 2: Send real-time fine notification
-      socketService.notifyFineImposed(bill.user_id.toString(), {
-        fine: fineAmount,
-        reason: 'Overdue fine imposed automatically',
-        billId: bill.bill_id
-      });
+      // Create a notification message for the user
+      const message = `A fine of ${fineAmount.toFixed(2)} has been imposed on your bill (ID: ${bill.bill_id}) due to overdue payment.`;
+
+      // Insert the notification into the Notifications table
+      await connection.execute(`
+        INSERT INTO Notifications (user_id, message)
+        VALUES (?, ?)
+      `, [bill.user_id, message]);
+
+      console.log(`Notification sent to user ID ${bill.user_id}`);
     }
   } catch (error) {
     console.error('Error imposing fines:', error);

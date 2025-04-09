@@ -1,6 +1,6 @@
 const db = require('../lib/db');
 const nodemailer = require('nodemailer');
-const socketService = require('../service/socketservice');
+
 
 const  getUser = async (req,res) => {
     const meterid = req.query.meterid;
@@ -23,7 +23,7 @@ const  getUser = async (req,res) => {
 
  // <-- Step 1
 
-const createNewBill = async (req, res) => {
+ const createNewBill = async (req, res) => {
   try {
     const { meter_id, units_consumed, total_amount, billing_month, due_date } = req.body;
 
@@ -58,11 +58,19 @@ const createNewBill = async (req, res) => {
             return res.status(500).json({ error: "Database error" });
           }
 
-          
-          socketService.notifyNewBill(user_id.toString(), {
-            amount: total_amount,
-            dueDate: due_date,
-            billingMonth: billing_month
+          // Create the notification message
+          const message = `Your bill for ${billing_month} has been generated and is due on ${due_date}.`;
+
+          // Insert notification into the Notifications table
+          const insertNotificationQuery = `
+            INSERT INTO Notifications (user_id, message)
+            VALUES (?, ?);
+          `;
+          db.query(insertNotificationQuery, [user_id, message], (err, notifResult) => {
+            if (err) {
+              // Log the error but do not block the bill generation response
+              console.error("Notification creation error:", err);
+            }
           });
 
           return res.status(201).json({

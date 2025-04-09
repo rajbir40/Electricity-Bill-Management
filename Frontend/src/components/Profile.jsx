@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 export default function Profile() {
   const { authUser } = authStore();
   const navigate = useNavigate();
-  
+
   const [dueBills, setDueBills] = useState([]);
   const fetchDueBills = async () => {
     try {
@@ -20,6 +20,7 @@ export default function Profile() {
       console.error("Error fetching due bills:", error);
     }
   };
+
   useEffect(() => {
     fetchDueBills();
   }, []);
@@ -32,7 +33,6 @@ export default function Profile() {
       alert("Please try again later.");
     }
   };
-  
 
   const [userDetails, setUserDetails] = useState({
     fullName: "",
@@ -60,7 +60,7 @@ export default function Profile() {
       alert("Failed to update user details.");
     }
   };
-  
+
   const fetchUserDetails = async () => {
     try {
       const user_id = authUser.user_id;
@@ -70,9 +70,11 @@ export default function Profile() {
       console.error('Error fetching user details:', error);
     }
   };
+
   useEffect(() => {
     fetchUserDetails();
   }, []);
+
   useEffect(() => {
     if (editMode) {
       setEditData({
@@ -94,11 +96,27 @@ export default function Profile() {
       console.error("Error fetching payment history:", error);
     }
   };
+
   useEffect(() => {
     fetchPaidBills();
   }, []);
 
+  // Notifications integration
   const [notifications, setNotifications] = useState([]);
+
+  const fetchNotifications = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/api/notifi/all-notifi?userId=2');
+      setNotifications(response.data);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
+
   const dismissNotification = (id) => {
     setNotifications(notifications.filter(notification => notification.id !== id));
   };
@@ -127,6 +145,7 @@ export default function Profile() {
       minute: '2-digit'
     }).format(date);
   };
+
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -267,7 +286,6 @@ export default function Profile() {
                         >
                           Pay Now
                         </button>
-                        
                       </div>
                     </div>
                   );
@@ -298,7 +316,6 @@ export default function Profile() {
                 {paidBills.length > 0 ? (
                   paidBills.slice(0, 2).map(bill => (
                     <div key={bill.receipt_number} className="border border-gray-200 rounded-md p-4 bg-white">
-                      
                       <div className="flex justify-between mb-2">
                         <h3 className="font-semibold text-gray-800">
                           {formatDate(bill.payment_date)}
@@ -312,19 +329,19 @@ export default function Profile() {
                           Account: {bill.account_number}
                         </span>
                         <button className="text-blue-600 hover:text-blue-800 font-medium"
-                        onClick={() =>
-                          navigate('/receipt', {
-                            state: {
-                              receiptId: bill.receipt_number,
-                              paymentDetails: {
-                                bill_id: bill.bill_id, 
-                                amount: bill.amount,
-                                accountNumber: bill.account_number,
-                                paymentMethod: bill.payment_method, 
+                          onClick={() =>
+                            navigate('/receipt', {
+                              state: {
+                                receiptId: bill.receipt_number,
+                                paymentDetails: {
+                                  bill_id: bill.bill_id, 
+                                  amount: bill.amount,
+                                  accountNumber: bill.account_number,
+                                  paymentMethod: bill.payment_method, 
+                                }
                               }
-                            }
-                          })
-                        }>
+                            })
+                          }>
                           Receipt
                         </button>
                       </div>
@@ -350,9 +367,11 @@ export default function Profile() {
                 </div>
               </div>
             </CardWrapper>
-            </div>
+          </div>
+
+          {/* Notifications and Usage Overview */}
+          <div className='grid grid-cols-1 grid-rows-2 w-full '>
             {/* Notifications Section */}
-            <div className='grid grid-cols-1 grid-rows-2 w-full '>
             <CardWrapper header={<h2 className="text-xl font-bold">Notifications</h2>}>
               {notifications.length > 0 ? (
                 <div className="space-y-4">
@@ -410,8 +429,7 @@ export default function Profile() {
                 </div>
               </div>
             </CardWrapper>
-            </div>
-          
+          </div>
         </div>
       </div>
     </div>
