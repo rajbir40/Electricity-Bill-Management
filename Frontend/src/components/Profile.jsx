@@ -267,9 +267,7 @@ export default function Profile() {
                         >
                           Pay Now
                         </button>
-                        <button className="border border-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-50 transition-colors bg-green-500">
-                          View Bill
-                        </button>
+                        
                       </div>
                     </div>
                   );

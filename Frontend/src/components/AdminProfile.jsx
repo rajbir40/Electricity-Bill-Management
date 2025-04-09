@@ -28,13 +28,13 @@ export default function AdminProfile() {
         <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-md p-6">
           <div className="flex flex-col md:flex-row items-center">
             {/* Profile Picture */}
-            <div className="w-32 h-32 mb-4 md:mb-0 md:mr-6">
-              <img
-                src="https://via.placeholder.com/150" 
-                alt="Admin Profile"
-                className="w-full h-full object-cover rounded-full border-4 border-blue-600"
-              />
-            </div>
+            <div className="flex justify-center mb-4">
+                <div className="h-24 w-24 rounded-full bg-gray-200 flex items-center justify-center border-4 border-blue-200">
+                  <span className="text-2xl font-bold text-blue-600">
+                    {admin.name?.split(' ').map(n => n[0]).join('')}
+                  </span>
+                </div>
+              </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-800">{admin.name}</h1>
               <p className="text-gray-600 mt-1">{admin.role}</p>
