@@ -8,7 +8,8 @@ const getAllUsers = async (req, res) => {
                 console.error("Database error:", err);
                 return res.status(500).json({ error: "Database error" });
             }
-            return res.json(results);
+            // console.log(results);
+            return res.json(results[0]);
         });
     } catch (error) {
         console.error("Error fetching data:", error);
@@ -82,5 +83,38 @@ const updateUser = async (req, res) => {
       res.status(500).json({ success: false, message: "Update failed" });
     }
   };
+
+  const getUsersCount = async (req, res) => {
+    try {
+        const sql = "SELECT COUNT(*) AS count FROM Users;";
+        db.query(sql, (err, results) => {
+            if (err) {
+                console.error("Database error:", err);
+                return res.status(500).json({ error: "Database error" });
+            }
+            return res.json(results);
+        });
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+};
+
+const fetchAllUsers = async (req, res) => {
+    try {
+        const sql = "SELECT * FROM Users;";
+        db.query(sql, (err, results) => {
+            if (err) {
+                console.error("Database error:", err);
+                return res.status(500).json({ error: "Database error" });
+            }
+            // console.log(results);
+            return res.json(results);
+        });
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+};
   
-module.exports = { getAllUsers  , getBillingHistory , getUser, updateUser};
+module.exports = { getAllUsers  , getBillingHistory , getUser, updateUser , getUsersCount  , fetchAllUsers};

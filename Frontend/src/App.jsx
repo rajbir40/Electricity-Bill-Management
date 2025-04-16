@@ -18,10 +18,11 @@ import { authStore } from './store/auth.store';
 import PaymentHistory from './components/PaymentHistory';
 import BillingHistory from './components/BillingHistory';
 import {Loader} from "lucide-react";
+import AdminDashboard from './components/Admin/AdminDashboard';
 
 function App() {
 
-  const {authUser,checkAuth,isCheckingAuth} = authStore();
+  const {authUser,checkAuth,isCheckingAuth,isAdmin} = authStore();
   useEffect(() => {
     checkAuth();
   },[checkAuth])
@@ -34,6 +35,10 @@ function App() {
     );
   }
 
+  console.log(authUser);
+  console.log(isAdmin);
+  console.log(isCheckingAuth);
+
   return (
     <>
       <BrowserRouter>
@@ -42,22 +47,25 @@ function App() {
           <Route path='/login' element={<LoginPage/>}/>
           <Route path='/forgot-password' element={<ForgotPassword/>}/>
           <Route path='/about' element={<About/>}/>
-          <Route path='/admin/bill-page' element={<BillPage/>}/>
-          <Route path="/" element={<SignUpPage/>} />
+          <Route path="/signup" element={<SignUpPage/>} />
+          <Route path='/home' element={<Home/>}/>
+          <Route path='/admin/dashboard' element={<AdminDashboard/> } />
 
           <Route path='/receipt' element={<Receipt/>}/>
           {/* Authenticated Routes */}
-          <Route path='/home' element={authUser ? <Home/> : <Navigate to="/" />}/>
-          <Route path='/profile' element={authUser ? <Profile/> : <Navigate to="/" />}/>
-          <Route path='/admin/home' element={authUser ? <AdminHome/> : <Navigate to="/" />}/>
-          <Route path='/admin/profile' element={authUser ? <AdminProfile/> : <Navigate to="/" />}/>
-          <Route path='/admin/find-user' element={authUser ? <FindUser/> : <Navigate to="/" />}/>
-          <Route path='/admin/find-meter' element={authUser ? <FindMeter/>: <Navigate to="/" />}/>
-          <Route path='/admin/find-meter' element={authUser ? <FindMeter/> : <Navigate to="/" />}/>
-          <Route path='/admin/generate-bill' element={authUser ? <GenerateBill/> : <Navigate to="/" />}/>
-          <Route path='/bill' element={<Bill/>}/>
-          <Route path='/payment-history' element={authUser ? <PaymentHistory/> : <Navigate to="/" />}/>
-          <Route path='/billing-history' element={authUser ? <BillingHistory/> : <Navigate to="/" />}/>
+          <Route path='/' element={authUser ? <Home/> : <Navigate to="/login" />}/>
+          <Route path='/profile' element={authUser ? <Profile/> : <Navigate to="/login" />}/>
+          <Route path='/admin/home' element={isAdmin ? <AdminHome/> : <Navigate to="/login" />}/>
+          <Route path='/admin/profile' element={isAdmin ? <AdminProfile/> : <Navigate to="/login" />}/>
+          <Route path='/admin/find-user' element={isAdmin ? <FindUser/> : <Navigate to="/login" />}/>
+          <Route path='/admin/find-meter' element={isAdmin ? <FindMeter/>: <Navigate to="/login" />}/>
+          <Route path='/admin/find-meter' element={isAdmin ? <FindMeter/> : <Navigate to="/login" />}/>
+          <Route path='/admin/generate-bill' element={isAdmin ? <GenerateBill/> : <Navigate to="/login" />}/>
+          {/* <Route path='/admin/dashboard' element={isAdmin ? <AdminDashboard/> : <Navigate to="/login" />}/> */}
+          <Route path='/bill' element={authUser ? <Bill/> : <Navigate to="/login" />}/>
+          <Route path='/admin/bill-page' element={isAdmin ? <BillPage/> : <Navigate to="/login" />}/>
+          <Route path='/payment-history' element={authUser ? <PaymentHistory/> : <Navigate to="/login" />}/>
+          <Route path='/billing-history' element={authUser ? <BillingHistory/> : <Navigate to="/login" />}/>
         </Routes>
       </BrowserRouter>
     </>

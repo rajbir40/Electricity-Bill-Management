@@ -50,11 +50,13 @@ const LoginPage = () => {
   
           localStorage.setItem("token", token);
           localStorage.setItem("role", user.role); // optional, if needed later
-  
-          if (user.role === 'admin') {
-            navigate('/admin/home');
+          console.log(user)
+          if (user.role === "admin") {
+            navigate('/admin/dashboard');
           } else {
+            console.log("YESUESIROEFHON");
             navigate('/home');
+            
           }
         }
       } catch (error) {
@@ -120,7 +122,7 @@ const LoginPage = () => {
         <div className="mt-6 text-center">
           <p className="text-gray-700">
             Do not have an account?{' '}
-            <a href="/" className="text-blue-600 hover:underline">
+            <a href="/signup" className="text-blue-600 hover:underline">
               Sign Up
             </a>
           </p>

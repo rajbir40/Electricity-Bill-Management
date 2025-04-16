@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import axios from "axios";
+import { Truck } from "lucide-react";
 const host = import.meta.env.VITE_BACKEND_HOST
 
 export const authStore = create((set) => ({
@@ -9,6 +10,7 @@ export const authStore = create((set) => ({
     isSigningIn: false,
     isUpdating: false,
     isUpdatingProfile: false,
+    isAdmin:false,
 
     checkAuth: async () => {
         try {
@@ -23,6 +25,9 @@ export const authStore = create((set) => ({
             });
             if(!response){
                 console.log("No response")
+            }
+            if(response.data[0].role === "admin"){
+                set({isAdmin:true});
             }
             // console.log(response.data[0]);
             set({ authUser: response.data[0], isCheckingAuth: false });

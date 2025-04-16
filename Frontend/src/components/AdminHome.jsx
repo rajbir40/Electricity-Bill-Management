@@ -6,7 +6,7 @@ import meter from '../assets/meter.jpg';
 import bill from '../assets/bill.jpg';
 export default function AdminHome() {
   return (
-    <div className="min-h-screen bg-[#facb76]">
+    <div className="min-h-screen bg-[rgb(250,203,118)]">
       <Navbar />
 
       <div className="container mx-auto py-8 px-4">

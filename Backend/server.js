@@ -8,6 +8,8 @@ const paymentRoutes = require('./routes/payment.route.js');
 const billRoutes = require('./routes/bill.route.js');
 const notifiRoutes = require('./routes/notifi.route.js');
 const dotenv = require('dotenv');
+const logRoutes = require('./routes/log.route.js');
+
 // const express = require('express');
 const http = require('http');
 const {Server} = require('socket.io');
@@ -46,6 +48,7 @@ app.use('/api/meter',meterRoutes);
 app.use('/api/payment',paymentRoutes);
 app.use('/api/bill',billRoutes);
 app.use('/api/notifi',notifiRoutes);
+app.use('/api/log',logRoutes);
 
 const PORT = process.env.PORT || 8080;
 

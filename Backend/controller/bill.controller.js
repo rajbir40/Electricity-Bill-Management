@@ -88,5 +88,38 @@ const receipt = async (req, res) => {
       res.status(500).json({ error: 'Failed to fetch receipts' });
     }
   };
+
+
+  const getPendingBillsCount = async (req,res) => {
+    try{
+        const query = `SELECT COUNT(*) AS count FROM Bills WHERE status = 'unpaid'`;
+        db.query(query, (err, results) => {
+          if (err) {
+              console.error("Database error:", err);
+              return res.status(500).json({ error: "Database error" });
+          }
+          return res.json(results);
+      });
+    }
+    catch(error){
+        console.log(error);
+        res.status(500).json({error:"Internal Server Error"});
+    }
+}
+
+const getLatestBills = async (req, res) => {
+    try {
+      const query = `SELECT * FROM Bills ORDER BY bill_id DESC LIMIT 5`;
+      db.query(query, (err, results) => {
+        if (err) {
+          console.error('Error fetching latest bills:', err);
+          return res.status(500).json({ message: 'Server error' });
+        }
+        res.json(results);
+      });
+    } catch (error) {
+      console.error('Error fetching latest bills:', error);
+    }
+  };
   
-module.exports = {getPendingBills ,getAllBills,fetchBillDetails, receipt, getReceiptsByUser};
+module.exports = {getPendingBills ,getAllBills,fetchBillDetails, receipt, getReceiptsByUser ,getPendingBillsCount , getLatestBills};

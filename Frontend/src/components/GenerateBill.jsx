@@ -2,26 +2,13 @@ import React, { useState } from 'react';
 import Navbar from './Navbar';
 
 export default function GenerateBill() {
-  const [meterId, setMeterId] = useState('');
+  const [meterNumber, setMeterNumber] = useState('');
   const [unitsConsumed, setUnitsConsumed] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const RATE_PER_UNIT = 0.15; // example rate per kWh
-
-  // Helper to format a Date object as YYYY-MM-DD
-  const formatDate = (date) => {
-    const d = new Date(date);
-    let month = '' + (d.getMonth() + 1);
-    let day = '' + d.getDate();
-    const year = d.getFullYear();
-
-    if (month.length < 2) month = '0' + month;
-    if (day.length < 2) day = '0' + day;
-
-    return [year, month, day].join('-');
-  };
+  const RATE_PER_UNIT = 0.15; 
 
   const calculateEstimate = () => {
     if (!unitsConsumed) return '0.00';
@@ -31,28 +18,11 @@ export default function GenerateBill() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage('');
-    setError('');
     setIsSubmitting(true);
 
-    // Calculate the billing month (current date) and due date (15 days from today)
-    const currentDate = new Date();
-    const billingMonth = formatDate(currentDate);
-    const dueDateObj = new Date(currentDate);
-    dueDateObj.setDate(dueDateObj.getDate() + 15);
-    const dueDate = formatDate(dueDateObj);
-
-    // Calculate total amount based on usage and the defined rate
-    const totalAmount = parseFloat(unitsConsumed) * RATE_PER_UNIT;
-
-    // Prepare the payload based on your SQL schema
     const payload = {
-      meter_id: meterId,
-      units_consumed: parseFloat(unitsConsumed),
-      total_amount: totalAmount.toFixed(2),
-      billing_month: billingMonth,
-      due_date: dueDate,
-      // status will default to 'unpaid' and generated_at is handled by the DB
+      meterNumber: meterNumber,
+      unitsConsumed: parseFloat(unitsConsumed),
     };
 
     try {
@@ -67,7 +37,7 @@ export default function GenerateBill() {
       if (response.ok) {
         setMessage('Bill generated successfully!');
         // Clear form on success
-        setMeterId('');
+        setMeterNumber('');
         setUnitsConsumed('');
       } else {
         setError(data.error || 'Failed to generate bill');
@@ -109,8 +79,8 @@ export default function GenerateBill() {
           
           <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-lg">
             <div className="mb-6">
-              <label htmlFor="meterId" className="block text-sm font-medium text-gray-700 mb-2">
-                Meter ID
+              <label htmlFor="meterNumber" className="block text-sm font-medium text-gray-700 mb-2">
+                Meter Number
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -120,10 +90,10 @@ export default function GenerateBill() {
                 </div>
                 <input
                   type="text"
-                  id="meterId"
-                  value={meterId}
-                  onChange={(e) => setMeterId(e.target.value)}
-                  placeholder="Enter meter ID"
+                  id="meterNumber"
+                  value={meterNumber}
+                  onChange={(e) => setMeterNumber(e.target.value)}
+                  placeholder="Enter meter number"
                   className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   required
                 />
@@ -132,7 +102,7 @@ export default function GenerateBill() {
 
             <div className="mb-6">
               <label htmlFor="unitsConsumed" className="block text-sm font-medium text-gray-700 mb-2">
-                Electricity Used (kWh)
+                Units Consumed 
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -145,7 +115,7 @@ export default function GenerateBill() {
                   id="unitsConsumed"
                   value={unitsConsumed}
                   onChange={(e) => setUnitsConsumed(e.target.value)}
-                  placeholder="Enter usage amount"
+                  placeholder="Enter units consumed"
                   className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   required
                   step="0.01"
@@ -176,7 +146,7 @@ export default function GenerateBill() {
           </form>
           
           <div className="mt-6 text-center text-sm text-gray-600">
-            <p>Bills are due within 15 days of generation</p>
+            <p>Bills are due within 30 days of generation</p>
           </div>
         </div>
       </div>

@@ -62,9 +62,50 @@ const payBill = async(req,res)=>{
   });
 }
 
-const receipt = async(req,res)=>{
-  const {name,email,phone,address} = req.body;
-  
-}
+const getTotalRevenue = async (req, res) => {
+    try {
+      const query = `SELECT SUM(amount_paid) AS total_revenue FROM Payments`;
+      db.query(query, (err, results) => {
+        if (err) {
+          console.error('Error fetching total revenue:', err);
+          return res.status(500).json({ message: 'Server error' }); 
+        }
+        res.json(results[0]); 
+      }); 
+    } catch (error) {
+      console.error('Error fetching total revenue:', error);
+    }
+  };
 
-module.exports = { recordPayment, unpaidBills, payBill};
+  const getDueAmount = async (req, res) => {
+    try {
+      const query = `SELECT SUM(total_amount) AS due_amount FROM Bills WHERE status = 'unpaid'`;
+      db.query(query, (err, results) => {
+        if (err) {
+          console.error('Error fetching total revenue:', err);
+          return res.status(500).json({ message: 'Server error' }); 
+        }
+        res.json(results[0]); 
+      }); 
+    } catch (error) {
+      console.error('Error fetching total revenue:', error);
+    }
+  };
+
+  const getPaymentReport = async (req, res) => {
+    try {
+      const query = `SELECT SUM(CASE WHEN status = 'paid' THEN total_amount ELSE 0 END) AS paid, SUM(CASE WHEN status = 'unpaid' THEN total_amount ELSE 0 END) AS unpaid, SUM(CASE WHEN status = 'overdue' THEN total_amount ELSE 0 END) AS overdue FROM Bills;
+`;
+      db.query(query, (err, results) => {
+        if (err) {
+          console.error('Error fetching total revenue:', err);
+          return res.status(500).json({ message: 'Server error' }); 
+        }
+        res.json(results[0]); 
+      }); 
+    } catch (error) {
+      console.error('Error fetching total revenue:', error);
+    }
+  };
+
+module.exports = { recordPayment, unpaidBills, payBill ,getTotalRevenue , getDueAmount , getPaymentReport};
