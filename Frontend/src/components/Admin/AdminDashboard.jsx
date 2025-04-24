@@ -9,7 +9,7 @@ import UserPage from "./UserPage";
 import MeterPage from "./MeterPage";
 import BillPage from "./BillsPage";
 import Analytics from "./Analytics";
-// import Notifications from "./Notifications";
+import Notifications from "./GenerateBill";
 import { useNavigate } from 'react-router-dom';
 
 
@@ -116,7 +116,7 @@ export default function AdminDashboard() {
 
         <div className="flex-1 overflow-y-auto">
           <ul className="p-4 space-y-2">
-            {/* <li>
+            <li>
               <a
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-blue-700 ${
                   activeTab === "dashboard" ? "bg-blue-700 font-semibold" : ""
@@ -126,7 +126,7 @@ export default function AdminDashboard() {
                 <Home size={18} />
                 <span>Dashboard</span>
               </a>
-            </li> */}
+            </li>
             <li>
               <a
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-blue-700 ${
@@ -171,7 +171,7 @@ export default function AdminDashboard() {
                 <span>Reports & Analytics</span>
               </a>
             </li>
-            {/* <li>
+            <li>
               <a
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-blue-700 ${
                   activeTab === "notifications" ? "bg-blue-700 font-semibold" : ""
@@ -179,9 +179,9 @@ export default function AdminDashboard() {
                 onClick={() => setActiveTab("notifications")}
               >
                 <Bell size={18} />
-                <span>Notifications</span>
+                <span>Generate Bills</span>
               </a>
-            </li> */}
+            </li>
           </ul>
         </div>
 
@@ -199,27 +199,27 @@ export default function AdminDashboard() {
         <header className="bg-white shadow-sm border-b border-gray-200">
           <div className="flex items-center justify-between px-6 py-4">
             <div className="flex items-center w-1/3">
-              <div className="relative w-full">
-                {/* <input
+              {/* <div className="relative w-full">
+                <input
                   type="text"
                   placeholder="Search..."
                   className="w-full px-4 py-2 pr-10 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                /> */}
-                {/* <Search
+                />
+                <Search
                   className="absolute right-3 top-2.5 text-gray-400"
                   size={20}
-                /> */}
-              </div>
+                />
+              </div> */}
             </div>
 
             <div className="flex items-center gap-6">
               <div className="relative">
-                {/* <button className="relative p-2 rounded-full hover:bg-gray-100 transition-colors">
+                <button className="relative p-2 rounded-full hover:bg-gray-100 transition-colors">
                   <Bell size={22} className="text-gray-600" />
                   <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-xs flex items-center justify-center rounded-full">
                     3
                   </span>
-                </button> */}
+                </button>
               </div>
 
               <div className="dropdown dropdown-end">
@@ -329,9 +329,9 @@ export default function AdminDashboard() {
                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                   <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
                     <h2 className="text-lg font-semibold text-gray-800">Recent Bills</h2>
-                    <button onClick={setActiveTab("bills")} className="text-blue-600 text-sm font-medium hover:text-blue-700">
+                    <Link to="/admin/bill-page" className="text-blue-600 text-sm font-medium hover:text-blue-700">
                       View All
-                    </button>
+                    </Link>
                   </div>
 
                   <div className="overflow-x-auto">
