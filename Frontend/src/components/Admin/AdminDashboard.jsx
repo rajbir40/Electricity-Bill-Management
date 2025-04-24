@@ -329,9 +329,9 @@ export default function AdminDashboard() {
                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                   <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
                     <h2 className="text-lg font-semibold text-gray-800">Recent Bills</h2>
-                    <Link to="/admin/bill-page" className="text-blue-600 text-sm font-medium hover:text-blue-700">
+                    <Button onClick={setActiveTab("bills")} className="text-blue-600 text-sm font-medium hover:text-blue-700">
                       View All
-                    </Link>
+                    </Button>
                   </div>
 
                   <div className="overflow-x-auto">
