@@ -122,4 +122,20 @@ const getLatestBills = async (req, res) => {
     }
   };
   
-module.exports = {getPendingBills ,getAllBills,fetchBillDetails, receipt, getReceiptsByUser ,getPendingBillsCount , getLatestBills};
+const fetchPaidBills = async (req, res) => {
+    try {
+      const user_id = req.params.user_id;
+      const query = `SELECT * FROM Bills WHERE user_id = ? AND status = 'paid'`;
+      db.query(query, [user_id], (err, results) => {
+        if (err) {
+          console.error('Error fetching paid bills:', err);
+          return res.status(500).json({ message: 'Server error' });
+        }
+        res.json(results);
+      });
+    } catch (error) {
+      console.error('Error fetching paid bills:', error);
+    }
+  };
+
+module.exports = {getPendingBills ,getAllBills,fetchBillDetails, receipt, getReceiptsByUser ,getPendingBillsCount , getLatestBills, fetchPaidBills};

@@ -55,7 +55,7 @@ const LoginPage = () => {
             navigate('/admin/dashboard');
           } else {
             console.log("YESUESIROEFHON");
-            navigate('/home');
+            navigate('/profile');
             
           }
         }

@@ -50,10 +50,10 @@ function App() {
           <Route path="/signup" element={<SignUpPage/>} />
           <Route path='/home' element={<Home/>}/>
           <Route path='/admin/dashboard' element={<AdminDashboard/> } />
+          <Route path='/' element={<Home/>}/>
 
           <Route path='/receipt' element={<Receipt/>}/>
           {/* Authenticated Routes */}
-          <Route path='/' element={authUser ? <Home/> : <Navigate to="/login" />}/>
           <Route path='/profile' element={authUser ? <Profile/> : <Navigate to="/login" />}/>
           <Route path='/admin/home' element={isAdmin ? <AdminHome/> : <Navigate to="/login" />}/>
           <Route path='/admin/profile' element={isAdmin ? <AdminProfile/> : <Navigate to="/login" />}/>

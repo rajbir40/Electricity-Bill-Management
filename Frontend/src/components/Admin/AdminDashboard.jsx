@@ -214,7 +214,7 @@ export default function AdminDashboard() {
 
             <div className="flex items-center gap-6">
               <div className="relative">
-                <button className="relative p-2 rounded-full hover:bg-gray-100 transition-colors">
+                <button className="relative p-2 rounded-full hover:bg-gray-100 transition-colors" onClick={() => setActiveTab("reports")}>
                   <Bell size={22} className="text-gray-600" />
                   <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-xs flex items-center justify-center rounded-full">
                     3
@@ -237,13 +237,10 @@ export default function AdminDashboard() {
                   className="dropdown-content menu p-2 mt-2 shadow-lg bg-white rounded-lg w-52 border border-gray-200"
                 >
                   <li>
-                    <a className="px-4 py-2 hover:bg-gray-100 text-gray-700">Profile</a>
-                  </li>
-                  <li>
-                    <a className="px-4 py-2 hover:bg-gray-100 text-gray-700">Settings</a>
+                    <a className="px-4 py-2 hover:bg-gray-100 text-gray-700" href="/profile">Profile</a>
                   </li>
                   <li className="border-t border-gray-100 mt-1 pt-1">
-                    <a className="px-4 py-2 hover:bg-gray-100 text-red-600">Logout</a>
+                    <a className="px-4 py-2 hover:bg-gray-100 text-red-600" onClick={handleLogout}>Logout</a>
                   </li>
                 </ul>
               </div>

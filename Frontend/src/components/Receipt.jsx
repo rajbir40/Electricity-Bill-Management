@@ -55,7 +55,7 @@ export default function Receipt() {
 
 
   const handleReturnToDashboard = () => {
-    navigate('/home');
+    navigate('/profile');
   };
 
   const formatDate = (dateString) => {

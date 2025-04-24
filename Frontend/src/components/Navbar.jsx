@@ -28,16 +28,6 @@ export default function Navbar() {
     { name: 'Profile', href: '/profile', icon: User, current: window.location.pathname === '/profile' },
   ];
 
-  // Conditionally add admin link
-  if (authUser?.role === 'admin') {
-    navigation.push({ 
-      name: 'Admin', 
-      href: '/admin/profile', 
-      icon: Shield, 
-      current: window.location.pathname.startsWith('/admin') 
-    });
-  }
-
   // Add logout at the end
   navigation.push({ name: 'Logout', href: '#', icon: LogOut, onClick: handleLogout, current: false });
 

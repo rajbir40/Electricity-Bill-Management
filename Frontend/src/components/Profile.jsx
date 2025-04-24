@@ -70,7 +70,7 @@ export default function Profile() {
   // Fetch Billing History
   const fetchBillingHistory = async () => {
     try {
-      const response = await axios.get(`${host}/api/bill/history/${authUser.user_id}`);
+      const response = await axios.get(`${host}/api/bill/paid-bills/${authUser.user_id}`);
       setBillingHistory(response.data);
     } catch (error) {
       console.error("Error fetching billing history:", error);
@@ -143,13 +143,16 @@ export default function Profile() {
   // Handle notification dismissal
   const dismissNotification = async (id) => {
     try {
-      // In a real app, you would call an API here
-      // await axios.delete(`${host}/api/notifi/dismiss/${id}`);
-      setNotifications(notifications.filter(notification => notification.id !== id));
+      console.log("Dismissing ID:", id);
+  
+      setNotifications(prev =>
+        prev.filter(notification => notification.message !== id)
+      );
     } catch (error) {
       console.error("Error dismissing notification:", error);
     }
   };
+  
 
   // Format utilities
   const formatDate = (dateString) => {
@@ -420,14 +423,14 @@ export default function Profile() {
             {notifications.length > 0 ? (
               <div className="space-y-4">
                 {notifications.map(notification => (
-                  <div key={notification.id} className="border border-gray-200 rounded-md p-4 bg-white flex justify-between items-center">
+                  <div className="border border-gray-200 rounded-md p-4 bg-white flex justify-between items-center">
                     <div>
                       <p className="text-gray-800">{notification.message}</p>
-                      <p className="text-sm text-gray-500 mt-1">Date: {notification.date}</p>
+                      {/* <p className="text-sm text-gray-500 mt-1">Date: {notification.date}</p> */}
                     </div>
                     <button 
                       className="ml-4 text-red-600 hover:text-red-800 text-sm"
-                      onClick={() => dismissNotification(notification.id)}
+                      onClick={() => dismissNotification(notification.message)}
                     >
                       Dismiss
                     </button>
@@ -452,7 +455,7 @@ export default function Profile() {
                   <FileText className="h-5 w-5 mr-2 text-blue-600" />
                   Billing History
                 </h2>
-                <button className="text-sm font-medium text-blue-600 hover:text-blue-800">
+                <button onClick={() => navigate('/payment-history')} className="text-sm font-medium text-blue-600 hover:text-blue-800">
                   Download Statement
                 </button>
               </div>
@@ -490,7 +493,18 @@ export default function Profile() {
                         <td className="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
                           <button 
                             className="text-blue-600 hover:text-blue-900 flex items-center justify-end space-x-1"
-                            onClick={() => navigate(`/bill/${bill.bill_id}`)}
+                            onClick={() =>
+                              navigate('/receipt', {
+                                state: {
+                                  receiptId: bill.receipt_number,
+                                  paymentDetails: {
+                                    bill_id: bill.bill_id, 
+                                    amount: bill.amount,
+                                    accountNumber: bill.account_number,
+                                    paymentMethod: bill.payment_method, 
+                                  }
+                                }
+                              })}
                           >
                             <span>View</span>
                             <Download className="h-3 w-3 ml-1" />
@@ -505,40 +519,6 @@ export default function Profile() {
           </CardWrapper>
         </div>
         
-        {/* Usage Overview Card (from second example) */}
-        <div className="mt-6">
-          <CardWrapper
-            header={
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-medium text-gray-900 flex items-center">
-                  <FileText className="h-5 w-5 mr-2 text-blue-600" />
-                  Usage Overview
-                </h2>
-                <button className="text-sm font-medium text-blue-600 hover:text-blue-800">
-                  View Detailed Analytics
-                </button>
-              </div>
-            }
-          >
-            <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="border border-gray-200 rounded-md p-4 text-center bg-white">
-                <p className="text-gray-500 text-sm">Current Month</p>
-                <p className="text-2xl font-bold text-gray-800">487 kWh</p>
-                <p className="text-xs text-red-600">↑ 5% from last month</p>
-              </div>
-              <div className="border border-gray-200 rounded-md p-4 text-center bg-white">
-                <p className="text-gray-500 text-sm">Monthly Average</p>
-                <p className="text-2xl font-bold text-gray-800">462 kWh</p>
-                <p className="text-xs text-green-600">↓ 2% from last year</p>
-              </div>
-              <div className="border border-gray-200 rounded-md p-4 text-center bg-white">
-                <p className="text-gray-500 text-sm">Peak Usage</p>
-                <p className="text-2xl font-bold text-gray-800">6 - 8 PM</p>
-                <p className="text-xs text-gray-500">Weekdays</p>
-              </div>
-            </div>
-          </CardWrapper>
-        </div>
       </div>
     </div>
   );
