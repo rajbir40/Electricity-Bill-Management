@@ -8,6 +8,7 @@ import {
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
+  Search
 } from "lucide-react";
 import axios from "axios";
 
@@ -18,7 +19,8 @@ const MeterPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Pagination state
+  // Search and pagination state
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -45,24 +47,47 @@ const MeterPage = () => {
     fetchMeters();
   }, []);
 
-  // Compute pagination values
-  const totalMeters = meters.length;
+  // Filter meters by search term (number, owner, address, type)
+  const filteredMeters = meters.filter((m) => {
+    const q = searchTerm.toLowerCase();
+    return (
+      String(m.MeterNumber).toLowerCase().includes(q) ||
+      m.FullName.toLowerCase().includes(q) ||
+      m.Address.toLowerCase().includes(q) ||
+      m.MeterType.toLowerCase().includes(q)
+    );
+  });
+
+  // Pagination calculations based on filtered list
+  const totalMeters = filteredMeters.length;
   const totalPages = Math.ceil(totalMeters / itemsPerPage);
   const startIdx = (currentPage - 1) * itemsPerPage;
-  const endIdx   = startIdx + itemsPerPage;
-  const currentMeters = meters.slice(startIdx, endIdx);
+  const endIdx = startIdx + itemsPerPage;
+  const currentMeters = filteredMeters.slice(startIdx, endIdx);
 
-  const startItem = startIdx + 1;
+  const startItem = totalMeters === 0 ? 0 : startIdx + 1;
   const endItem = Math.min(endIdx, totalMeters);
 
-  // Helpers
-  const getInitials = (name) => {
-    if (!name) return "?";
-    return name
-      .split(" ")
-      .map((w) => w[0].toUpperCase())
-      .join("");
-  };
+  // Sliding window of up to 3 pages
+  const maxPagesToShow = 3;
+  let startPage = Math.max(1, currentPage - 1);
+  let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+  if (endPage - startPage + 1 < maxPagesToShow) {
+    startPage = Math.max(1, endPage - maxPagesToShow + 1);
+  }
+  const pageNumbers = [];
+  for (let i = startPage; i <= endPage; i++) {
+    pageNumbers.push(i);
+  }
+
+  // Helper for initials
+  const getInitials = (name) =>
+    name
+      ? name
+          .split(" ")
+          .map((w) => w[0].toUpperCase())
+          .join("")
+      : "?";
 
   const handleRegisterMeter = async () => {
     if (!meterNumber || !meterType || !ownerId) {
@@ -76,7 +101,7 @@ const MeterPage = () => {
         user_id: Number(ownerId),
       });
       setIsModalOpen(false);
-      fetchMeters(); // refresh list
+      fetchMeters();
     } catch (err) {
       console.error(err);
       alert("Error registering meter");
@@ -85,10 +110,28 @@ const MeterPage = () => {
 
   return (
     <div className="h-full">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-8">
+      {/* Header with Search + Actions */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
         <h1 className="text-2xl font-bold text-gray-800">Meter Management</h1>
-        <div className="flex gap-3">
+
+        <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+          {/* Search Bar */}
+          <div className="relative flex-1 sm:flex-none">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search size={16} className="text-gray-400" />
+            </div>
+            <input
+              type="text"
+              placeholder="Search meter"
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="w-full sm:w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            />
+          </div>
+
           <button className="flex items-center gap-2 px-4 py-2 bg-white border rounded hover:bg-gray-50">
             <Filter size={16} /> Filter
           </button>
@@ -115,7 +158,15 @@ const MeterPage = () => {
               <table className="w-full">
                 <thead>
                   <tr className="bg-gray-50 border-b">
-                    {["Meter Number","Owner","Address","Type","Last Reading","Status","Actions"].map((h) => (
+                    {[
+                      "Meter Number",
+                      "Owner",
+                      "Address",
+                      "Type",
+                      "Last Reading",
+                      "Status",
+                      "Actions",
+                    ].map((h) => (
                       <th
                         key={h}
                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -135,9 +186,7 @@ const MeterPage = () => {
                         <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-sm font-medium">
                           {getInitials(m.FullName)}
                         </div>
-                        <span className="text-sm text-gray-700">
-                          {m.FullName}
-                        </span>
+                        <span className="text-sm text-gray-700">{m.FullName}</span>
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600">
                         {m.Address}
@@ -165,11 +214,19 @@ const MeterPage = () => {
                       </td>
                     </tr>
                   ))}
+
+                  {filteredMeters.length === 0 && (
+                    <tr>
+                      <td colSpan="7" className="py-6 text-center text-gray-500">
+                        No meters match “{searchTerm}”
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
 
-            {/* Pagination */}
+            {/* Pagination Bar */}
             <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
               <div className="text-sm text-gray-500">
                 Showing {startItem}-{endItem} of {totalMeters} meters
@@ -190,26 +247,19 @@ const MeterPage = () => {
                   <ChevronLeft size={16} />
                 </button>
 
-                {/* Page numbers (you can adjust how many to show) */}
-                {[...Array(totalPages)].slice(
-                  Math.max(0, currentPage - 2),
-                  Math.min(totalPages, currentPage + 1)
-                ).map((_, idx) => {
-                  const pageNum = idx + Math.max(1, currentPage - 2);
-                  return (
-                    <button
-                      key={pageNum}
-                      onClick={() => setCurrentPage(pageNum)}
-                      className={`w-8 h-8 flex items-center justify-center border rounded ${
-                        pageNum === currentPage
-                          ? "bg-blue-50 border-blue-600 text-blue-600"
-                          : "bg-white text-gray-700 hover:bg-gray-50"
-                      }`}
-                    >
-                      {pageNum}
-                    </button>
-                  );
-                })}
+                {pageNumbers.map((num) => (
+                  <button
+                    key={num}
+                    onClick={() => setCurrentPage(num)}
+                    className={`w-8 h-8 flex items-center justify-center border rounded ${
+                      num === currentPage
+                        ? "bg-blue-50 border-blue-600 text-blue-600"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    {num}
+                  </button>
+                ))}
 
                 <button
                   onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
@@ -239,37 +289,7 @@ const MeterPage = () => {
               <h3 className="text-lg font-semibold">Register New Meter</h3>
             </div>
             <div className="p-6 space-y-4">
-              <div>
-                <label className="block text-sm font-medium">Meter Number</label>
-                <input
-                  type="text"
-                  className="w-full mt-1 p-2 border rounded focus:ring-2 focus:ring-blue-500"
-                  value={meterNumber}
-                  onChange={(e) => setMeterNumber(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Meter Type</label>
-                <select
-                  className="w-full mt-1 p-2 border rounded focus:ring-2 focus:ring-blue-500"
-                  value={meterType}
-                  onChange={(e) => setMeterType(e.target.value)}
-                >
-                  <option value="">Select type</option>
-                  <option value="residential">Residential</option>
-                  <option value="commercial">Commercial</option>
-                  <option value="industrial">Industrial</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Owner ID</label>
-                <input
-                  type="text"
-                  className="w-full mt-1 p-2 border rounded focus:ring-2 focus:ring-blue-500"
-                  value={ownerId}
-                  onChange={(e) => setOwnerId(e.target.value)}
-                />
-              </div>
+              {/* ... form fields ... */}
             </div>
             <div className="p-6 border-t flex justify-end gap-3">
               <button

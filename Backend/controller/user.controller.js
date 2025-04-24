@@ -116,5 +116,43 @@ const fetchAllUsers = async (req, res) => {
         return res.status(500).json({ error: "Internal server error" });
     }
 };
+
+const deleteuser = async (req, res) => {
+    const selectedId = req.query.userid;
+    console.log("Deleting user with ID:", selectedId);
+    try {
+        // Delete entries in child tables first (respecting foreign key constraints)
+        const queries = [
+            'DELETE FROM Payments WHERE user_id = ?',
+            'DELETE FROM Fines WHERE user_id = ?',
+            'DELETE FROM Receipts WHERE user_id = ?',
+            'DELETE FROM Notifications WHERE user_id = ?',
+            // 'DELETE FROM AdminActions WHERE admin_id = ?',
+            'DELETE FROM Bills WHERE user_id = ?',
+            'DELETE FROM Meters WHERE user_id = ?',
+            // Finally delete the user
+            'DELETE FROM Users WHERE user_id = ?'
+        ];
+
+        for (const query of queries) {
+            await new Promise((resolve, reject) => {
+                db.query(query, [selectedId], (err, results) => {
+                    if (err) {
+                        console.error(`Error running query: ${query}`, err);
+                        return reject(err);
+                    }
+                    resolve(results);
+                });
+            });
+        }
+
+        return res.json({ message: "User and all associated data deleted successfully" });
+
+    } catch (error) {
+        console.error("Error deleting user and related data:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+};
+
   
-module.exports = { getAllUsers  , getBillingHistory , getUser, updateUser , getUsersCount  , fetchAllUsers};
+module.exports = { getAllUsers  ,deleteuser ,  getBillingHistory , getUser, updateUser , getUsersCount  , fetchAllUsers};
