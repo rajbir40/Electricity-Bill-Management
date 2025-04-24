@@ -22,6 +22,29 @@ const getallnotifi = async (req, res) => {
     }
 };
 
+const updatenotifi = async (req, res) => {
+    const notifi_id = req.query.notifi_id;
+
+    try {
+        if (!notifi_id) {
+            return res.status(400).json({ error: "Notification ID is required" });
+        }
+
+        const sql = "UPDATE notifications SET dismissed = true WHERE notification_id = ?";
+        db.query(sql, [notifi_id], (err, results) => {
+            if (err) {
+                console.error("Database error:", err);
+                return res.status(500).json({ error: "Database error" });
+            }
+            return res.json({ message: "Notification dismissed successfully", results });
+        });
+    } catch (error) {
+        console.error("Error updating notification:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+};
+
+
 module.exports = {
-    getallnotifi
+    getallnotifi , updatenotifi
 };

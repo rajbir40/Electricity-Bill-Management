@@ -116,7 +116,7 @@ export default function AdminDashboard() {
 
         <div className="flex-1 overflow-y-auto">
           <ul className="p-4 space-y-2">
-            <li>
+            {/* <li>
               <a
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-blue-700 ${
                   activeTab === "dashboard" ? "bg-blue-700 font-semibold" : ""
@@ -126,7 +126,7 @@ export default function AdminDashboard() {
                 <Home size={18} />
                 <span>Dashboard</span>
               </a>
-            </li>
+            </li> */}
             <li>
               <a
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-blue-700 ${
@@ -329,9 +329,9 @@ export default function AdminDashboard() {
                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                   <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
                     <h2 className="text-lg font-semibold text-gray-800">Recent Bills</h2>
-                    <Button onClick={setActiveTab("bills")} className="text-blue-600 text-sm font-medium hover:text-blue-700">
+                    <button onClick={setActiveTab("bills")} className="text-blue-600 text-sm font-medium hover:text-blue-700">
                       View All
-                    </Button>
+                    </button>
                   </div>
 
                   <div className="overflow-x-auto">

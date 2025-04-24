@@ -106,7 +106,7 @@ export default function Profile() {
 
   const fetchNotifications = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/api/notifi/all-notifi?userId=2');
+      const response = await axios.get(`http://localhost:8080/api/notifi/all-notifi?userId=${authUser.user_id}`);
       setNotifications(response.data);
     } catch (error) {
       console.error("Error fetching notifications:", error);
@@ -117,9 +117,16 @@ export default function Profile() {
     fetchNotifications();
   }, []);
 
-  const dismissNotification = (id) => {
-    setNotifications(notifications.filter(notification => notification.id !== id));
+  const dismissNotification = async (id) => {
+    try {
+      const response = await axios.put(`http://localhost:8080/api/notifi/update-notifi?notifi_id=${id}`);
+      console.log("Notification dismissed:", response.data);
+      window.location.reload();
+    } catch (error) {
+      console.error("Error dismissing notification:", error);
+    }
   };
+  
 
   // CardWrapper component remains unchanged
   const CardWrapper = ({ header, children }) => (
@@ -383,7 +390,7 @@ export default function Profile() {
                       </div>
                       <button 
                         className="ml-4 text-red-600 hover:text-red-800 text-sm"
-                        onClick={() => dismissNotification(notification.id)}
+                        onClick={() => dismissNotification(notification.notification_id)}
                       >
                         Dismiss
                       </button>
