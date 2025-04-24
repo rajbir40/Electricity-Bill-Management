@@ -104,7 +104,7 @@ const UserPage = () => {
           {/* Add New */}
           <button
             onClick={() => {
-              setSelectedUser({ fullName: "", email: "", phone: "", role: "" });
+              setSelectedUser({ fullName: "", email: "", phone: "", role: ""  , password:""});
               setModalType("edit");
             }}
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 border border-blue-600 rounded-lg hover:bg-blue-700 text-white text-sm"
@@ -261,6 +261,7 @@ const UserPage = () => {
               <p><strong>Email:</strong> {selectedUser.email}</p>
               <p><strong>Phone:</strong> {selectedUser.phone}</p>
               <p><strong>Address:</strong> {selectedUser.address}</p>
+              
               <button
                 onClick={() => setModalType(null)}
                 className="mt-6 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"

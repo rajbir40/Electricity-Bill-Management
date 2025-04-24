@@ -9,7 +9,7 @@ import UserPage from "./UserPage";
 import MeterPage from "./MeterPage";
 import BillPage from "./BillsPage";
 import Analytics from "./Analytics";
-import Notifications from "./Notifications";
+// import Notifications from "./Notifications";
 import { useNavigate } from 'react-router-dom';
 
 
@@ -171,7 +171,7 @@ export default function AdminDashboard() {
                 <span>Reports & Analytics</span>
               </a>
             </li>
-            <li>
+            {/* <li>
               <a
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-blue-700 ${
                   activeTab === "notifications" ? "bg-blue-700 font-semibold" : ""
@@ -181,7 +181,7 @@ export default function AdminDashboard() {
                 <Bell size={18} />
                 <span>Notifications</span>
               </a>
-            </li>
+            </li> */}
           </ul>
         </div>
 
@@ -214,12 +214,12 @@ export default function AdminDashboard() {
 
             <div className="flex items-center gap-6">
               <div className="relative">
-                <button className="relative p-2 rounded-full hover:bg-gray-100 transition-colors">
+                {/* <button className="relative p-2 rounded-full hover:bg-gray-100 transition-colors">
                   <Bell size={22} className="text-gray-600" />
                   <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-xs flex items-center justify-center rounded-full">
                     3
                   </span>
-                </button>
+                </button> */}
               </div>
 
               <div className="dropdown dropdown-end">

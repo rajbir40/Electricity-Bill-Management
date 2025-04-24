@@ -117,6 +117,7 @@ const fetchAllUsers = async (req, res) => {
     }
 };
 
+
 const deleteuser = async (req, res) => {
     const selectedId = req.query.userid;
     console.log("Deleting user with ID:", selectedId);
