@@ -115,8 +115,32 @@ const MeterPage = () => {
         <h1 className="text-2xl font-bold text-gray-800">Meter Management</h1>
 
         <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+          {/* Search Bar */}
           <div className="relative flex-1 sm:flex-none">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search size={16} className="text-gray-400" />
+            </div>
+            <input
+              type="text"
+              placeholder="Search meter"
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="w-full sm:w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            />
           </div>
+
+          {/* <button className="flex items-center gap-2 px-4 py-2 bg-white border rounded hover:bg-gray-50">
+            <Filter size={16} /> Filter
+          </button> */}
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white border-blue-600 rounded hover:bg-blue-700"
+          >
+            <Plus size={16} /> Register New Meter
+          </button>
         </div>
       </div>
 

@@ -253,6 +253,7 @@ const BillsGeneration = () => {
             </button>
             <button
               type="submit"
+              style={{backgroundColor : "blue"}}
               disabled={isSubmitting}
               className={`py-2 px-6 rounded-lg shadow text-white font-medium transition-all ${
                 isSubmitting

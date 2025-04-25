@@ -214,12 +214,12 @@ export default function AdminDashboard() {
 
             <div className="flex items-center gap-6">
               <div className="relative">
-                <button className="relative p-2 rounded-full hover:bg-gray-100 transition-colors" onClick={() => setActiveTab("reports")}>
+                {/* <button className="relative p-2 rounded-full hover:bg-gray-100 transition-colors" onClick={() => setActiveTab("reports")}>
                   <Bell size={22} className="text-gray-600" />
                   <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-xs flex items-center justify-center rounded-full">
                     3
                   </span>
-                </button>
+                </button> */}
               </div>
 
               <div className="dropdown dropdown-end">
@@ -236,9 +236,9 @@ export default function AdminDashboard() {
                   tabIndex={0}
                   className="dropdown-content menu p-2 mt-2 shadow-lg bg-white rounded-lg w-52 border border-gray-200"
                 >
-                  <li>
+                  {/* <li>
                     <a className="px-4 py-2 hover:bg-gray-100 text-gray-700" href="/profile">Profile</a>
-                  </li>
+                  </li> */}
                   <li className="border-t border-gray-100 mt-1 pt-1">
                     <a className="px-4 py-2 hover:bg-gray-100 text-red-600" onClick={handleLogout}>Logout</a>
                   </li>
@@ -276,7 +276,7 @@ export default function AdminDashboard() {
                     <div>
                       <p className="text-sm font-medium text-gray-500 mb-1">Total Revenue</p>
                       <h3 className="text-2xl font-bold text-gray-800">{formatCurrency(revenue)}</h3>
-                      <p className="text-xs text-green-600 mt-1">↑ 12% from last month</p>
+                      {/* <p className="text-xs text-green-600 mt-1">↑ 12% from last month</p> */}
                     </div>
                   </div>
                 </div>
@@ -289,7 +289,7 @@ export default function AdminDashboard() {
                     <div>
                       <p className="text-sm font-medium text-gray-500 mb-1">Total Users</p>
                       <h3 className="text-2xl font-bold text-gray-800">{userCount}</h3>
-                      <p className="text-xs text-green-600 mt-1">↑ 237 new this month</p>
+                      {/* <p className="text-xs text-green-600 mt-1">↑ 237 new this month</p> */}
                     </div>
                   </div>
                 </div>
@@ -302,7 +302,7 @@ export default function AdminDashboard() {
                     <div>
                       <p className="text-sm font-medium text-gray-500 mb-1">Pending Bills</p>
                       <h3 className="text-2xl font-bold text-gray-800">{pendingBillsCount}</h3>
-                      <p className="text-xs text-amber-600 mt-1">425 bills awaiting payment</p>
+                      {/* <p className="text-xs text-amber-600 mt-1">425 bills awaiting payment</p> */}
                     </div>
                   </div>
                 </div>
@@ -315,7 +315,7 @@ export default function AdminDashboard() {
                     <div>
                       <p className="text-sm font-medium text-gray-500 mb-1">Due Amount</p>
                       <h3 className="text-2xl font-bold text-gray-800">{formatCurrency(dueAmount)}</h3>
-                      <p className="text-xs text-red-600 mt-1">124 bills overdue</p>
+                      {/* <p className="text-xs text-red-600 mt-1">124 bills overdue</p> */}
                     </div>
                   </div>
                 </div>

@@ -295,14 +295,14 @@ export default function Analytics() {
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded-lg shadow">
+      {/* <div className="bg-white p-6 rounded-lg shadow">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-bold">Saved Reports</h2>
-          <button className="bg-white border border-gray-300 rounded-lg px-3 py-1 flex items-center gap-1 text-sm font-medium">
+          {/* <button className="bg-white border border-gray-300 rounded-lg px-3 py-1 flex items-center gap-1 text-sm font-medium">
             <Plus size={16} />
             Create New Report
-          </button>
-        </div>
+          </button> */}
+        {/* </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -313,8 +313,8 @@ export default function Analytics() {
                 <th className="px-4 py-3">Created</th>
                 <th className="px-4 py-3">Last Run</th>
                 <th className="px-4 py-3">Schedule</th>
-                <th className="px-4 py-3">Actions</th>
-              </tr>
+                <th className="px-4 py-3">Actions</th> */}
+              {/* </tr>
             </thead>
             <tbody>
               <tr className="border-b border-gray-200">
@@ -352,8 +352,8 @@ export default function Analytics() {
                       <Download size={16} />
                     </button>
                     <button className="text-gray-500 hover:text-blue-600">
-                      <Edit size={16} />
-                    </button>
+                      <Edit size={16} /> */}
+                    {/* </button>
                   </div>
                 </td>
               </tr>
@@ -374,13 +374,13 @@ export default function Analytics() {
                     <button className="text-gray-500 hover:text-blue-600">
                       <Edit size={16} />
                     </button>
-                  </div>
-                </td>
+                  </div> */}
+                {/* </td>
               </tr>
             </tbody>
           </table>
         </div>
-      </div>
+      </div> */} 
     </div>
   );
 }
