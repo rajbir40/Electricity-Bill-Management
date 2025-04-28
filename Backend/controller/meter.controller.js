@@ -171,7 +171,8 @@ const getMeterDetails = async (req, res) => {
 
 const generateBill = async (req, res) => {
   try {
-    const { meterNumber, unitsConsumed } = req.body;
+    const { meterNumber, unitsConsumed } = req.body.payload;
+    // console.log(meterNumber);
     if (!meterNumber || !unitsConsumed)
       return res.status(400).json({ error: "Missing required fields" });
 

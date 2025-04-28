@@ -132,12 +132,12 @@ export default function Analytics() {
         <div className="flex gap-2">
           <button className="bg-white border border-gray-300 rounded-lg px-4 py-2 flex items-center gap-2 text-sm font-medium">
             <Calendar size={16} />
-            Apr 1 - Apr 10, 2025
+            {new Date().toLocaleDateString()}          
           </button>
-          <button className="bg-blue-600 text-white rounded-lg px-4 py-2 flex items-center gap-2 text-sm font-medium">
+          {/* <button className="bg-blue-600 text-white rounded-lg px-4 py-2 flex items-center gap-2 text-sm font-medium">
             <Download size={16} />
             Export Report
-          </button>
+          </button> */}
         </div>
       </div>
 

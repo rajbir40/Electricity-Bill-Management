@@ -38,7 +38,7 @@ export default function Navbar() {
           {/* Logo/Brand */}
           <div className="flex items-center">
             <div className="flex-shrink-0 flex items-center">
-              <span className="text-blue-600 font-bold text-xl">E-Bill</span>
+              <span className="text-blue-600 font-bold text-xl">Smart-Bill</span>
             </div>
           </div>
 

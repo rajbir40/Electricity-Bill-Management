@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { Activity, AlertCircle, Check, Zap } from "lucide-react";
+import axios from "axios";
+
+const host = import.meta.env.VITE_BACKEND_HOST;
 
 const BillsGeneration = () => {
   const [meterNumber, setMeterNumber] = useState("");
@@ -27,6 +30,8 @@ const BillsGeneration = () => {
       unitsConsumed: parseFloat(unitsConsumed),
     };
 
+    console.log(payload)
+
     try {
       // Simulating API call since we don't have the actual host
       setTimeout(() => {
@@ -37,19 +42,18 @@ const BillsGeneration = () => {
       }, 1500);
       
       // Uncomment for real implementation
-      const response = await fetch(`${host}/api/meter/generate-bill`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const data = await response.json();
-      if (response.ok) {
+      const response = await axios.post(`${host}/api/meter/generate-bill`, { payload });
+      const data = response.data;
+      
+      if (response.status === 200) {
         setMessage("Bill generated successfully!");
         setMeterNumber("");
         setUnitsConsumed("");
+        console.log("success");
       } else {
         setError(data.error || "Failed to generate bill");
       }
+      
     } catch (err) {
       setError("Error generating bill");
       setIsSubmitting(false);
@@ -150,7 +154,7 @@ const BillsGeneration = () => {
                 htmlFor="customerType"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Customer Type
+                Meter Type
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">

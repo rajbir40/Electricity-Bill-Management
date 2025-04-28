@@ -111,7 +111,7 @@ export default function AdminDashboard() {
       {/* Sidebar */}
       <div className="bg-blue-600 w-64 text-white flex flex-col shadow-lg">
         <div className="p-6 border-b border-blue-500">
-          <h2 className="text-2xl font-bold">E-Bill Admin</h2>
+          <h2 className="text-2xl font-bold">Smart-Bill Admin</h2>
         </div>
 
         <div className="flex-1 overflow-y-auto">

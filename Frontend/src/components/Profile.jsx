@@ -82,6 +82,7 @@ export default function Profile() {
     try {
       const response = await axios.get(`${host}/api/notifi/all-notifi?userId=${authUser.user_id}`);
       setNotifications(response.data);
+      console.log(response.data)
     } catch (error) {
       console.error("Error fetching notifications:", error);
       // Fallback to mock data if API fails
@@ -144,6 +145,11 @@ export default function Profile() {
   const dismissNotification = async (id) => {
     try {
       console.log("Dismissing ID:", id);
+      const response = await axios.post(`${host}/api/notifi/update-notifi/${id}`);
+
+      if(response.status === 200){
+        console.log("success")
+      }
   
       setNotifications(prev =>
         prev.filter(notification => notification.message !== id)
@@ -430,7 +436,7 @@ export default function Profile() {
                     </div>
                     <button 
                       className="ml-4 text-red-600 hover:text-red-800 text-sm"
-                      onClick={() => dismissNotification(notification.message)}
+                      onClick={() => dismissNotification(notification.notification_id)}
                     >
                       Dismiss
                     </button>

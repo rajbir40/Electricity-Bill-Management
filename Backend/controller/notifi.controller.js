@@ -23,7 +23,8 @@ const getallnotifi = async (req, res) => {
 };
 
 const updatenotifi = async (req, res) => {
-    const notifi_id = req.query.notifi_id;
+    const notifi_id = req.params.notifi_id;
+    console.log(notifi_id)
 
     try {
         if (!notifi_id) {

@@ -139,7 +139,7 @@ export default function LandingPage() {
       </section>
 
       {/* Testimonials Section */}
-      <section id="testimonials" className="py-16 bg-white">
+      {/* <section id="testimonials" className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-gray-800 mb-4">What Our Users Say</h2>
@@ -173,10 +173,10 @@ export default function LandingPage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* CTA Section */}
-      <section className="py-16 bg-blue-600">
+      {/* <section className="py-16 bg-blue-600">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold text-white mb-6">Ready to Simplify Your Bill Management?</h2>
           <p className="text-blue-100 mb-8 max-w-2xl mx-auto">
@@ -198,7 +198,7 @@ export default function LandingPage() {
             </Link>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Contact Section */}
       <section id="contact" className="py-16 bg-gray-50">
