@@ -143,7 +143,7 @@ const SignUpPage = () => {
         
           <div className="bg-white shadow-xl rounded-xl p-8">
             <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Create Account</h2>
+              <h2   className="text-2xl font-bold text-gray-900 bg-blue">Create Account</h2>
               <p className="mt-2 text-gray-600">
                 Join SmartBill and start managing your electricity usage efficiently
               </p>
@@ -193,7 +193,8 @@ const SignUpPage = () => {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className={`w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-white text-lg font-medium ${
+                  style={{ backgroundColor: "blue" }}
+                  className={`bg-blue-700 w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-white text-lg font-medium ${
                     isLoading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
                   }`}
                 >
