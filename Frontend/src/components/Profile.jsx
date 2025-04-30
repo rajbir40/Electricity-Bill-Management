@@ -204,9 +204,9 @@ export default function Profile() {
             <CardWrapper
               header={
                 <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-bold">Account Information</h2>
+                  <h2 className="text-xl font-bold text-black">Account Information</h2>
                   <button
-                    className="text-sm font-medium hover:cursor-pointer hover:bg-gray-200 bg-amber-50 rounded-md pl-3 pr-3 pt-2 pb-2"
+                    className="text-sm font-medium hover:cursor-pointer hover:bg-gray-200 bg-amber-50 rounded-md pl-3 pr-3 pt-2 pb-2 text-black"
                     onClick={() => {
                       if (editMode) {
                         handleUpdate();
@@ -222,18 +222,18 @@ export default function Profile() {
               <div className="flex justify-center mb-4">
                 <div className="h-24 w-24 rounded-full bg-gray-200 flex items-center justify-center border-4 border-blue-200">
                   <span className="text-2xl font-bold text-blue-600">
-                    {userDetails.fullName?.split(' ').map(n => n[0]).join('')}
+                    {userDetails.fullName?.toLocaleUpperCase().split(' ').map(n => n[0]).join('')}
                   </span>
                 </div>
               </div>
               <div className="text-center mb-4">
-                <h3 className="text-xl font-bold text-gray-800">{userDetails.fullName}</h3>
+                <h3 className="text-xl font-bold text-black">{userDetails.fullName}</h3>
                 <p className="text-gray-500">Customer since November 2022</p>
               </div>
               {editMode ? (
                 <>
                   <input
-                    className="w-full p-2 border rounded mb-2"
+                    className="w-full p-2 border rounded mb-2 text-black"
                     value={editData.fullName}
                     onChange={(e) =>
                       setEditData({ ...editData, fullName: e.target.value })
@@ -241,7 +241,7 @@ export default function Profile() {
                     placeholder="Full Name"
                   />
                   <input
-                    className="w-full p-2 border rounded mb-2"
+                    className="w-full p-2 border rounded mb-2 text-black"
                     value={editData.email}
                     onChange={(e) =>
                       setEditData({ ...editData, email: e.target.value })
@@ -249,7 +249,7 @@ export default function Profile() {
                     placeholder="Email"
                   />
                   <input
-                    className="w-full p-2 border rounded mb-2"
+                    className="w-full p-2 border rounded mb-2 text-black"
                     value={editData.phone}
                     onChange={(e) =>
                       setEditData({ ...editData, phone: e.target.value })
@@ -257,7 +257,7 @@ export default function Profile() {
                     placeholder="Phone"
                   />
                   <input
-                    className="w-full p-2 border rounded mb-2"
+                    className="w-full p-2 border rounded mb-2 text-black"
                     value={editData.address}
                     onChange={(e) =>
                       setEditData({ ...editData, address: e.target.value })
@@ -288,7 +288,7 @@ export default function Profile() {
             </CardWrapper>
 
             {/* Pending Bills Card */}
-            <CardWrapper header={<h2 className="text-xl font-bold">Pending Bills</h2>}>
+            <CardWrapper header={<h2 className="text-xl font-bold text-black">Pending Bills</h2>}>
               {dueBills.length > 0 ? (
                 dueBills.map((bill) => {
                   const formattedMonth = new Date(bill.billing_month).toLocaleString('default', {
@@ -301,7 +301,7 @@ export default function Profile() {
                     day: 'numeric',
                   });
                   return (
-                    <div key={bill.bill_id} className="border border-gray-200 rounded-md p-4 bg-white">
+                    <div key={bill.bill_id} className="border border-gray-200 rounded-md p-4 bg-white mb-4">
                       <div className="flex justify-between mb-2">
                         <h3 className="font-semibold text-gray-800">{formattedMonth}</h3>
                         <span className="font-bold text-blue-600">₹{parseFloat(bill.total_amount).toFixed(2)}</span>
@@ -338,8 +338,8 @@ export default function Profile() {
             <CardWrapper
               header={
                 <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-bold">Payment History</h2>
-                  <button className="text-sm font-medium" onClick={()=>{navigate('/payment-history')}}>View All</button>
+                  <h2 className="text-xl font-bold text-black">Payment History</h2>
+                  <button className="text-sm font-medium text-black hover:bg-gray-200 bg-amber-50 rounded-md pl-3 pr-3 pt-2 pb-2" onClick={()=>{navigate('/payment-history')}}>View All</button>
                 </div>
               }
             >
@@ -403,14 +403,14 @@ export default function Profile() {
           {/* Notifications and Billing History */}
           <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6'>
             {/* Notifications Section */}
-            <CardWrapper header={<h2 className="text-xl font-bold">Notifications</h2>}>
+            <CardWrapper header={<h2 className="text-xl font-bold text-black">Notifications</h2>}>
               {notifications.length > 0 ? (
                 <div className="space-y-4">
                   {notifications.map(notification => (
                     <div key={notification.id || notification.notification_id} className="border border-gray-200 rounded-md p-4 bg-white flex justify-between items-center">
                       <div>
                         <p className="text-gray-800">{notification.message}</p>
-                        <p className="text-sm text-gray-500 mt-1">Date: {notification.date}</p>
+                        <p className="text-sm text-gray-500 mt-1">Date: {formatDate(notification.date)}</p>
                       </div>
                       <button 
                         className="ml-4 text-red-600 hover:text-red-800 text-sm"
@@ -435,9 +435,9 @@ export default function Profile() {
             <CardWrapper
               header={
                 <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-bold">Billing History</h2>
-                  <button onClick={() => navigate('/payment-history')} className="text-sm font-medium hover:text-blue-800">
-                    Download Statement
+                  <h2 className="text-xl font-bold text-black">Billing History</h2>
+                  <button onClick={() => navigate('/payment-history')} className="text-sm font-medium hover:text-blue-800 text-black">
+                    View Statement
                   </button>
                 </div>
               }

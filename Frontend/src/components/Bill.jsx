@@ -100,7 +100,7 @@ export default function Bill() {
                 </div>
                 
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-900 mb-1">
                     Customer Name
                   </label>
                   <input
@@ -110,13 +110,13 @@ export default function Bill() {
                     value={user ? user.fullName : ''}
                     disabled
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-gray-800"
                     required
                   />
                 </div>
                 
                 <div>
-                  <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="amount" className="block text-sm font-medium text-gray-800 mb-1">
                     Bill Amount (USD)
                   </label>
                   <input
@@ -126,7 +126,7 @@ export default function Bill() {
                     value={bill ? bill.total_amount : ''}
                     onChange={handleChange}
                     disabled
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-gray-800"
                     required
                     min="1"
                     step="0.01"
@@ -144,7 +144,7 @@ export default function Bill() {
                     value={user ? user.email : ''}
                     disabled
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-gray-800"
                     required
                   />
                 </div>
@@ -214,6 +214,7 @@ export default function Bill() {
                 
                 <button
                   type="submit"
+                  style={{backgroundColor : "blue"}}
                   className="w-full bg-green-600 text-white py-3 px-6 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out"
                   disabled={isLoading}
                 >
