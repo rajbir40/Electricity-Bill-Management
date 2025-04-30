@@ -85,7 +85,7 @@ export default function LandingPage() {
                     Take control of your electricity usage with our intuitive dashboard.
                   </p>
                   
-                  <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                  {/* <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
                     <Link
                       to="/signup"
                       className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-md font-medium"
@@ -98,7 +98,7 @@ export default function LandingPage() {
                     >
                       Log In
                     </Link>
-                  </div>
+                  </div> */}
                 </div>
                 <div className="w-full md:w-1/2">
                   <div className="bg-white/70 backdrop-blur-md p-6 rounded-xl shadow-xl">
